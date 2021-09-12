@@ -22,7 +22,7 @@
   "gnetId": null,
   "graphTooltip": 0,
   "id": 1,
-  "iteration": 1631388117887,
+  "iteration": 1631459787533,
   "links": [],
   "panels": [
     {
@@ -312,6 +312,34 @@
           "color": {
             "mode": "palette-classic"
           },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 73,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
           "mappings": [],
           "thresholds": {
             "mode": "absolute",
@@ -328,26 +356,20 @@
       },
       "gridPos": {
         "h": 10,
-        "w": 8,
+        "w": 6,
         "x": 0,
         "y": 10
       },
       "id": 115,
-      "maxPerRow": 3,
       "options": {
-        "colorMode": "value",
-        "graphMode": "area",
-        "justifyMode": "center",
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom"
         },
-        "text": {},
-        "textMode": "auto"
+        "tooltip": {
+          "mode": "single"
+        }
       },
       "pluginVersion": "8.1.2",
       "repeat": "symbol",
@@ -363,7 +385,7 @@
         }
       ],
       "title": "${symbol}",
-      "type": "stat"
+      "type": "timeseries"
     }
   ],
   "refresh": "30s",
@@ -375,7 +397,7 @@
       {
         "allValue": null,
         "current": {
-          "selected": false,
+          "selected": true,
           "text": [
             "All"
           ],
@@ -409,7 +431,7 @@
     ]
   },
   "time": {
-    "from": "now-12h",
+    "from": "now-3h",
     "to": "now"
   },
   "timepicker": {
@@ -429,5 +451,5 @@
   "timezone": "",
   "title": "Crypto Price",
   "uid": "WJea-ZI7k",
-  "version": 3
+  "version": 6
 }
