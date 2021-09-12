@@ -3,6 +3,9 @@ CryptoWatch
 
 Track your favorite crypto coin price and your wallet balance.
 
+![image](https://user-images.githubusercontent.com/2369982/132984579-8abd9f1e-cfb7-455c-86d4-6544cd61f68d.png)
+
+
 ## Install
 
 ### Create .env:
