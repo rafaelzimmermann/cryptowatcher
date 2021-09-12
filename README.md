@@ -77,12 +77,49 @@ Grafana is preconfigured with dashboards and Prometheus as the default data sour
 * Url: http://prometheus:9090
 * Access: proxy
 
+## Changing currency to Dollar
+
+Update the file cryptowath/config.json and set dollar as currency:
+
+```
+{
+  "wallet": {
+    "ADA": 1000.0,
+    "SOL": 100,
+    "ETH": 5,
+    "BTC": 1
+  },
+  "watchPrices": [
+    "ADA",
+    "BTC",
+    "SOL",
+    "BNB",
+    "DOGE",
+    "MBOX"
+  ],
+  "currency": "USDT"
+}
+```
+
+Replace the currency on grafana/provisioning/dashboards/crypto.json.
+Use your favorite editor and replace all occurrences of the string "currencyEUR" by "currencyUSD".
+
+```
+       "yaxes": [
+         {
+-          "format": "currencyEUR",
++          "format": "currencyUSD",
+           "label": null,
+           "logBase": 1,
+```
 
 
+------
 
 Powered by: 
 
 <img src="https://user-images.githubusercontent.com/2369982/132985035-7cb35db9-d4db-4cc4-afe6-e609a96958f8.png" width="400" />
+
 
 ## Did you like it? Consider paying me a coffee
 
