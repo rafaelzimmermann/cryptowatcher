@@ -28,6 +28,11 @@ docker-compose up -d
 vi cryptowatch/config.json
 ```
 
+To check the available symbols:
+```
+curl https://api.binance.com/api/v3/exchangeInfo | jq ".symbols[].symbol"
+```
+
 [Prices grafana dashboard](http://localhost:3000/d/WJea-ZI7k/crypto-price?orgId=1&from=now-3h&to=now)
 
 ## Prerequisites:
@@ -71,16 +76,6 @@ Grafana is preconfigured with dashboards and Prometheus as the default data sour
 * Access: proxy
 
 
-
-## Sending metrics to the Pushgateway
-
-The [pushgateway](https://github.com/prometheus/pushgateway) is used to collect data from batch jobs or from services.
-
-To push data, simply execute:
-
-    echo "some_metric 3.14" | curl --data-binary @- http://user:password@localhost:9091/metrics/job/some_job
-
-Please replace the `user:password` part with your user and password set in the initial configuration (default: `admin:admin`).
 
 
 
