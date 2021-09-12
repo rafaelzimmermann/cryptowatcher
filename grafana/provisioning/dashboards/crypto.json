@@ -22,7 +22,7 @@
   "gnetId": null,
   "graphTooltip": 0,
   "id": 1,
-  "iteration": 1631459787533,
+  "iteration": 1631459985469,
   "links": [],
   "panels": [
     {
@@ -377,7 +377,7 @@
       "targets": [
         {
           "exemplar": true,
-          "expr": "crypto_price{symbol=~\"${symbol}.*\"}",
+          "expr": "crypto_price{symbol=~\"${symbol}\"}",
           "instant": false,
           "interval": "",
           "legendFormat": "{{symbol}}",
@@ -406,7 +406,7 @@
           ]
         },
         "datasource": "Prometheus",
-        "definition": "label_values(crypto_balance, symbol)",
+        "definition": "label_values(crypto_price, symbol)",
         "description": null,
         "error": null,
         "hide": 0,
@@ -416,8 +416,8 @@
         "name": "symbol",
         "options": [],
         "query": {
-          "query": "label_values(crypto_balance, symbol)",
-          "refId": "Prometheus-symbol-Variable-Query"
+          "query": "label_values(crypto_price, symbol)",
+          "refId": "StandardVariableQuery"
         },
         "refresh": 1,
         "regex": "",
@@ -451,5 +451,5 @@
   "timezone": "",
   "title": "Crypto Price",
   "uid": "WJea-ZI7k",
-  "version": 6
+  "version": 9
 }
