@@ -16,6 +16,13 @@ ADMIN_USER=admin
 ADMIN_PASSWORD=admin
 ```
 
+### Configure your wallet assets and prices to watch
+
+```
+vi cryptowatch/config.json
+```
+
+
 ### Clone this repository on your Docker host, cd into test directory and run compose up:
 
 ```
@@ -24,18 +31,14 @@ cd cryptowatch
 docker-compose up -d
 ```
 
-### Configure your wallet assets and prices to watch
+Open on your browser: 
+[http://localhost:3000/](http://localhost:3000/d/WJea-ZI7k/crypto-price?orgId=1&from=now-3h&to=now)
 
-```
-vi cryptowatch/config.json
-```
 
 To check the available symbols:
 ```
 curl https://api.binance.com/api/v3/exchangeInfo | jq ".symbols[].symbol"
 ```
-
-[Prices grafana dashboard](http://localhost:3000/d/WJea-ZI7k/crypto-price?orgId=1&from=now-3h&to=now)
 
 ## Prerequisites:
 
