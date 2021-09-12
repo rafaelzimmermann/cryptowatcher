@@ -3,7 +3,7 @@ CryptoWatch
 
 Track your favorite crypto coin price and your wallet balance.
 
-Screenshot 2021-09-12 at 13.27.07![image](https://user-images.githubusercontent.com/2369982/132985763-1ed6920c-2a44-442b-bb9d-7373d82a4d2e.png)
+![image](https://user-images.githubusercontent.com/2369982/132985763-1ed6920c-2a44-442b-bb9d-7373d82a4d2e.png)
 
 
 
