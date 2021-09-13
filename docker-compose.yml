@@ -1,11 +1,5 @@
 version: '2.1'
 
-networks:
-  monitor-net:
-    driver: bridge
-    external: true
-
-
 volumes:
     prometheus_data: {}
     grafana_data: {}
@@ -30,8 +24,6 @@ services:
       - 9090
     ports:
       - 9090:9090
-    networks:
-      - monitor-net
     labels:
       org.label-schema.group: "monitoring"
 
@@ -50,8 +42,6 @@ services:
       - 3000
     ports:
       - 3000:3000
-    networks:
-      - monitor-net
     labels:
       org.label-schema.group: "monitoring"
 
@@ -63,8 +53,6 @@ services:
       - 9091
     ports:
       - 9091:9091
-    networks:
-      - monitor-net
     labels:
       org.label-schema.group: "monitoring"
 
@@ -77,7 +65,5 @@ services:
       - prometheus
     container_name: cryptowatch
     restart: unless-stopped
-    networks:
-      - monitor-net
     labels:
       org.label-schema.group: "application"
