@@ -4,7 +4,7 @@ from typing import List
 import requests
 
 BINANCE_URL = "https://www.binance.com/api/v3/ticker/price"
-SPECIAL_CASES = ["BETHEUR", "AUDIOEUR", "MBOXEUR", "EUREUR", "MLNEUR", "IDEXEUR", "SYSEUR", "THETAEUR", "SKLEUR"]
+BINANCE_EXCHANGE_INFO = "https://api.binance.com/api/v3/exchangeInfo"
 
 
 class Price:
@@ -16,74 +16,42 @@ class Price:
         return f"{self.symbol}\t{self.price:,.8f}".replace(".", "%").replace(",", ".").replace("%", ",")
 
 
-def get_price(ticker: str) -> Price:
+def get_price(symbol: str) -> Price:
     try:
-        response = requests.request(method="GET", url=BINANCE_URL, params={"symbol": ticker})
+        response = requests.request(method="GET", url=BINANCE_URL, params={"symbol": symbol})
         resp_json = response.json()
         return Price(resp_json["symbol"], float(resp_json["price"]))
     except:
         return None
 
 
-def convert_two_steps(symbol: str, ticker1: str, ticker2: str):
-    p1 = get_price(ticker1)
-    p2 = get_price(ticker2)
-    return Price(symbol, p1.price * p2.price)
+def resolve_price(available_symbols: List[str], ticker: str, currency: str) -> Price:
+    for symbol in available_symbols:
+        if symbol.endswith(currency):
+            bridge_ticker = symbol.replace(currency, "")
+            bridge_symbol = f"{ticker}{bridge_ticker}"
+            if bridge_symbol in available_symbols:
+                p1 = get_price(bridge_symbol)
+                p2 = get_price(symbol)
+                return Price(f"{ticker}{currency}", p1.price * p2.price)
 
 
-def convert_two_steps2(symbol: str, ticker1: str, ticker2: str):
-    p1 = get_price(ticker1)
-    p2 = get_price(ticker2)
-    return Price(symbol, p1.price * (1 /p2.price))
+def get_available_symbols() -> list:
+    response = requests.request(method="GET", url=BINANCE_EXCHANGE_INFO)
+    resp_json = response.json()
+    return [item["symbol"] for item in resp_json["symbols"]]
 
 
-def two_steps_usdt(symbol: str):
-    return convert_two_steps2(symbol + "EUR", symbol + "USDT", "EURUSDT")
-
-
-def two_steps_btc(symbol: str):
-    return convert_two_steps(symbol + "EUR", symbol + "BTC", "BTCEUR")
-
-
-def betheur():
-    return convert_two_steps("BETHEUR", "BETHETH", "ETHEUR")
-
-
-def audioeur():
-    return two_steps_usdt("AUDIO")
-
-
-def mboxeur():
-    return two_steps_usdt("MBOX")
-
-
-def mlneur():
-    return two_steps_usdt("MLN")
-
-
-def idexeur():
-    return two_steps_btc("IDEX")
-
-
-def syseur():
-    return two_steps_btc("SYS")
-
-
-def thetaeur():
-    return two_steps_btc("THETA")
-
-
-def skleur():
-    return two_steps_usdt("SKL")
-
-
-def get_prices(tickers: List[str]):
+def get_prices(tickers: List[str], currency: str):
+    available_symbols = get_available_symbols()
     prices = []
     for ticker in tickers:
-        if ticker in SPECIAL_CASES:
-            prices.append(globals()[ticker.lower()]())
-            continue
-        price = get_price(ticker)
+        symbol = ticker + currency
+        if symbol in available_symbols:
+            price = get_price(symbol)
+        else:
+            price = resolve_price(available_symbols, ticker, currency)
+
         if price:
             prices.append(price)
         else:
@@ -94,7 +62,7 @@ def get_prices(tickers: List[str]):
 def main():
     with open("config.json") as f:
         conf = json.load(f)
-        for p in get_prices(conf["symbols"]):
+        for p in get_prices(conf["watchPrices"], conf["currency"]):
             print(p)
 
 

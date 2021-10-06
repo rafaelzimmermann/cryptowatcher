@@ -31,12 +31,11 @@ def main():
     path = os.path.dirname(os.path.realpath(__file__))
     with open(path + "/config.json") as f:
         conf = json.load(f)
-        symbols = [coin + conf["currency"] for coin in conf["watchPrices"]]
-        for p in get_prices(symbols):
+        for p in get_prices(conf["watchPrices"], conf["currency"]):
             push_price(p)
 
     for key in sorted(conf["wallet"].keys()):
-        price = get_prices([key + conf["currency"]])[0]
+        price = get_prices([key], conf["currency"])[0]
         value = price.price * conf["wallet"][key] if price else 0.0
         push_balance(key, value)
 
