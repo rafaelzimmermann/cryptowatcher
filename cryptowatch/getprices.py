@@ -1,5 +1,5 @@
 import json
-from typing import List
+from typing import List, Optional
 
 import requests
 
@@ -8,7 +8,9 @@ BINANCE_EXCHANGE_INFO = "https://api.binance.com/api/v3/exchangeInfo"
 
 
 class Price:
-    def __init__(self, symbol: str, price: float):
+    def __init__(self, ticker: str, fiat: str, symbol: str, price: float):
+        self.ticker = ticker
+        self.fiat = fiat
         self.symbol = symbol
         self.price = price
 
@@ -16,24 +18,28 @@ class Price:
         return f"{self.symbol}\t{self.price:,.8f}".replace(".", "%").replace(",", ".").replace("%", ",")
 
 
-def get_price(symbol: str) -> Price:
+def get_price(ticker: str, currency: str) -> Optional[Price]:
     try:
+        symbol = f"{ticker}{currency}"
         response = requests.request(method="GET", url=BINANCE_URL, params={"symbol": symbol})
         resp_json = response.json()
-        return Price(resp_json["symbol"], float(resp_json["price"]))
+        return Price(ticker=ticker, fiat=currency, symbol=resp_json["symbol"], price=float(resp_json["price"]))
     except:
         return None
 
 
-def resolve_price(available_symbols: List[str], ticker: str, currency: str) -> Price:
+def resolve_price(available_symbols: List[str], ticker: str, currency: str) -> Optional[Price]:
+    if f"{ticker}{currency}" in available_symbols:
+        return get_price(ticker, currency)
     for symbol in available_symbols:
         if symbol.endswith(currency):
             bridge_ticker = symbol.replace(currency, "")
             bridge_symbol = f"{ticker}{bridge_ticker}"
             if bridge_symbol in available_symbols:
-                p1 = get_price(bridge_symbol)
-                p2 = get_price(symbol)
-                return Price(f"{ticker}{currency}", p1.price * p2.price)
+                p1 = get_price(ticker, bridge_ticker)
+                p2 = get_price(symbol.replace(currency, ''), currency)
+                return Price(ticker=ticker, fiat=currency, symbol=f"{ticker}{currency}", price=p1.price * p2.price)
+    return None
 
 
 def get_available_symbols() -> list:
@@ -48,7 +54,7 @@ def get_prices(tickers: List[str], currency: str):
     for ticker in tickers:
         symbol = ticker + currency
         if symbol in available_symbols:
-            price = get_price(symbol)
+            price = get_price(ticker, currency)
         else:
             price = resolve_price(available_symbols, ticker, currency)
 
@@ -62,8 +68,11 @@ def get_prices(tickers: List[str], currency: str):
 def main():
     with open("config.json") as f:
         conf = json.load(f)
-        for p in get_prices(conf["watchPrices"], conf["currency"]):
-            print(p)
+        for currency in conf["currencies"]:
+            print(currency)
+            for p in get_prices(conf["tickers"], currency):
+                print(p)
+            print("--------")
 
 
 if __name__ == '__main__':

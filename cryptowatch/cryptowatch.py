@@ -1,16 +1,16 @@
 #!/usr/local/bin/python
 
-import json
 import os
 
 from prometheus_client import CollectorRegistry, Gauge, push_to_gateway
 from prometheus_client.exposition import basic_auth_handler
 
+from config import Config
 from getprices import get_prices, Price
 
 registry = CollectorRegistry()
-gprice = Gauge('crypto_price', 'Price', labelnames=['symbol'], registry=registry)
-gbalance = Gauge('crypto_balance', 'Balance', labelnames=['symbol'], registry=registry)
+gprice = Gauge('crypto_price', 'Price', labelnames=['symbol', 'ticker', 'fiat'], registry=registry)
+gbalance = Gauge('crypto_balance', 'Balance', labelnames=['symbol', 'ticker', 'fiat'], registry=registry)
 
 
 def my_auth_handler(url, method, timeout, headers, data):
@@ -20,24 +20,24 @@ def my_auth_handler(url, method, timeout, headers, data):
 
 
 def push_price(price: Price):
-    gprice.labels(symbol=price.symbol).set(price.price)
+    gprice.labels(symbol=price.symbol, ticker=price.ticker, fiat=price.fiat).set(price.price)
 
 
-def push_balance(symbol: str, value: float):
-    gbalance.labels(symbol=symbol).set(value)
+def push_balance(price: Price, balance: float):
+    gbalance.labels(symbol=price.symbol, ticker=price.ticker, fiat=price.fiat).set(balance)
 
 
 def main():
     path = os.path.dirname(os.path.realpath(__file__))
-    with open(path + "/config.json") as f:
-        conf = json.load(f)
-        for p in get_prices(conf["watchPrices"], conf["currency"]):
-            push_price(p)
+    conf = Config(path + "/config.json")
 
-    for key in sorted(conf["wallet"].keys()):
-        price = get_prices([key], conf["currency"])[0]
-        value = price.price * conf["wallet"][key] if price else 0.0
-        push_balance(key, value)
+    for currency in conf.currencies:
+        for price in get_prices(conf.tickers, currency):
+            push_price(price)
+
+        for price in get_prices(sorted(conf.wallet.keys()), currency):
+            balance = price.price * conf.wallet[price.ticker] if price else 0.0
+            push_balance(price, balance)
 
     push_to_gateway('pushgateway:9091', job='pushBalance', registry=registry, handler=my_auth_handler)
 

@@ -5,14 +5,15 @@
     "ETH": 5,
     "BTC": 1
   },
-  "watchPrices": [
+  "tickers": [
     "ADA",
     "BTC",
     "SOL",
     "BNB",
     "DOGE",
     "MBOX",
-    "BETH"
+    "BETH",
+    "ETH"
   ],
-  "currency": "EUR"
+  "currencies": ["EUR", "USDT"]
 }

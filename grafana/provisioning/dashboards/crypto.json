@@ -19,11 +19,13 @@
     ]
   },
   "editable": true,
+  "fiscalYearStartMonth": 0,
   "gnetId": null,
   "graphTooltip": 0,
   "id": 1,
-  "iteration": 1633538608311,
+  "iteration": 1633783459079,
   "links": [],
+  "liveNow": false,
   "panels": [
     {
       "collapsed": false,
@@ -36,7 +38,7 @@
       },
       "id": 10,
       "panels": [],
-      "title": "Balance",
+      "title": "Balance ${fiat}",
       "type": "row"
     },
     {
@@ -47,7 +49,8 @@
       "datasource": null,
       "fieldConfig": {
         "defaults": {
-          "links": []
+          "links": [],
+          "unit": "none"
         },
         "overrides": []
       },
@@ -77,7 +80,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "8.1.2",
+      "pluginVersion": "8.2.0",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -87,10 +90,11 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "crypto_balance",
+          "exemplar": true,
+          "expr": "crypto_balance{ticker=~\"${ticker}\",fiat=\"${fiat}\"}",
           "interval": "",
           "intervalFactor": 10,
-          "legendFormat": "{{symbol}}",
+          "legendFormat": "{{ticker}}",
           "refId": "A"
         }
       ],
@@ -98,7 +102,6 @@
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "Balance",
       "tooltip": {
         "shared": true,
         "sort": 1,
@@ -114,7 +117,7 @@
       },
       "yaxes": [
         {
-          "format": "currencyEUR",
+          "format": "none",
           "label": null,
           "logBase": 1,
           "max": null,
@@ -137,6 +140,7 @@
     },
     {
       "datasource": null,
+      "description": "",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -151,7 +155,7 @@
           },
           "mappings": [],
           "min": 0,
-          "unit": "currencyEUR"
+          "unit": "none"
         },
         "overrides": []
       },
@@ -182,10 +186,10 @@
       "targets": [
         {
           "exemplar": true,
-          "expr": "crypto_balance",
+          "expr": "crypto_balance{fiat=\"${fiat}\"}",
           "instant": false,
           "interval": "",
-          "legendFormat": "{{symbol}}",
+          "legendFormat": "{{ticker}}",
           "refId": "A"
         }
       ],
@@ -196,6 +200,7 @@
       "fieldConfig": {
         "defaults": {
           "decimals": 2,
+          "displayName": "${fiat}",
           "mappings": [],
           "thresholds": {
             "mode": "absolute",
@@ -206,7 +211,7 @@
               }
             ]
           },
-          "unit": "currencyEUR"
+          "unit": "none"
         },
         "overrides": []
       },
@@ -232,11 +237,11 @@
         "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "8.1.2",
+      "pluginVersion": "8.2.0",
       "targets": [
         {
           "exemplar": true,
-          "expr": "sum(crypto_balance)",
+          "expr": "sum(crypto_balance{ticker=~\"${ticker}\",fiat=\"${fiat}\"})",
           "instant": false,
           "interval": "",
           "legendFormat": "",
@@ -245,7 +250,6 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Balance",
       "type": "stat"
     },
     {
@@ -307,7 +311,7 @@
               }
             ]
           },
-          "unit": "currencyEUR"
+          "unit": "none"
         },
         "overrides": []
       },
@@ -329,30 +333,30 @@
         }
       },
       "pluginVersion": "8.1.2",
-      "repeat": "symbol",
+      "repeat": "ticker",
       "repeatDirection": "h",
       "targets": [
         {
           "exemplar": true,
-          "expr": "crypto_price{symbol=~\"${symbol}\"}",
+          "expr": "crypto_price{ticker=~\"${ticker}\",fiat=\"${fiat}\"}",
           "instant": false,
           "interval": "",
-          "legendFormat": "{{symbol}}",
+          "legendFormat": "{{ticker}}",
           "refId": "A"
         }
       ],
-      "title": "${symbol}",
+      "title": "${ticker} ${fiat}",
       "type": "timeseries"
     }
   ],
   "refresh": "30s",
-  "schemaVersion": 30,
+  "schemaVersion": 31,
   "style": "dark",
   "tags": [],
   "templating": {
     "list": [
       {
-        "allValue": null,
+        "allValue": ".*",
         "current": {
           "selected": true,
           "text": [
@@ -363,17 +367,47 @@
           ]
         },
         "datasource": "Prometheus",
-        "definition": "label_values(crypto_price, symbol)",
+        "definition": "label_values(crypto_price, ticker)",
         "description": null,
         "error": null,
         "hide": 0,
         "includeAll": true,
-        "label": "symbol",
+        "label": "ticker",
         "multi": true,
-        "name": "symbol",
+        "name": "ticker",
         "options": [],
         "query": {
-          "query": "label_values(crypto_price, symbol)",
+          "query": "label_values(crypto_price, ticker)",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "tagValuesQuery": "",
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      },
+      {
+        "allValue": null,
+        "current": {
+          "selected": false,
+          "text": "USDT",
+          "value": "USDT"
+        },
+        "datasource": "Prometheus",
+        "definition": "label_values(crypto_price, fiat)",
+        "description": null,
+        "error": null,
+        "hide": 0,
+        "includeAll": false,
+        "label": "fiat",
+        "multi": false,
+        "name": "fiat",
+        "options": [],
+        "query": {
+          "query": "label_values(crypto_price, fiat)",
           "refId": "StandardVariableQuery"
         },
         "refresh": 1,
@@ -408,5 +442,5 @@
   "timezone": "",
   "title": "Crypto Price",
   "uid": "WJea-ZI7k",
-  "version": 15
+  "version": 35
 }
