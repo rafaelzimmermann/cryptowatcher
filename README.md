@@ -1,4 +1,4 @@
-CryptoWatch
+CryptoWatcher
 ========
 
 Track your favorite crypto coin price and your wallet balance.
@@ -19,15 +19,15 @@ ADMIN_PASSWORD=admin
 ### Configure your wallet assets and prices to watch
 
 ```
-vi cryptowatch/config.json
+vi cryptowatcher/config.json
 ```
 
 
 ### Clone this repository on your Docker host, cd into test directory and run compose up:
 
 ```
-git clone https://github.com/rafaelzimmermann/cryptowatch.git
-cd cryptowatch
+git clone https://github.com/rafaelzimmermann/cryptowatcher.git
+cd cryptowatcher
 docker-compose up -d
 ```
 
@@ -50,7 +50,7 @@ curl https://api.binance.com/api/v3/exchangeInfo | jq ".symbols[].symbol"
 * Prometheus (metrics database) `http://<host-ip>:9090`
 * Prometheus-Pushgateway (push acceptor for ephemeral and batch jobs) `http://<host-ip>:9091`
 * Grafana (visualize metrics) `http://<host-ip>:3000`
-* cryptowatch (containers that collect prices)
+* cryptowatcher (containers that collect prices)
 
 ## Setup Grafana
 

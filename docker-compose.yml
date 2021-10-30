@@ -56,14 +56,14 @@ services:
     labels:
       org.label-schema.group: "monitoring"
 
-  cryptowatch:
+  cryptowatcher:
     build:
-      context: ./cryptowatch
+      context: ./cryptowatcher
       dockerfile: Dockerfile
     depends_on:
       - pushgateway
       - prometheus
-    container_name: cryptowatch
+    container_name: cryptowatcher
     restart: unless-stopped
     labels:
       org.label-schema.group: "application"
