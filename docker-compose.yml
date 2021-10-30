@@ -5,7 +5,6 @@ volumes:
     grafana_data: {}
 
 services:
-
   prometheus:
     image: prom/prometheus:v2.17.1
     container_name: prometheus
@@ -67,3 +66,39 @@ services:
     restart: unless-stopped
     labels:
       org.label-schema.group: "application"
+
+  postgres:
+    image: postgres:14.0
+    container_name: postgres
+    environment:
+      POSTGRES_HOST: postgres
+      POSTGRES_USER: walletwatcher
+      POSTGRES_PASSWORD: walletwatcher
+      POSTGRES_DB: walletwatcher
+    expose:
+      - 5432
+    ports:
+      - 5432:5432
+    volumes:
+      - ./postgres:/docker-entrypoint-initdb.d
+      - ./db-data/:/var/lib/postgresql/data/
+    labels:
+      org.label-schema.group: "database"
+
+
+  walletwatcher:
+    build:
+      context: ./walletwatcher
+      dockerfile: Dockerfile
+    depends_on:
+      - postgres
+    container_name: walletwatcher
+    volumes:
+      - ./wallets_data:/wallets_data
+    restart: unless-stopped
+    labels:
+      org.label-schema.group: "importer"
+
+networks:
+  default:
+    driver: bridge

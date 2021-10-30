@@ -1,3 +1,7 @@
 .idea
 
 **/__pycache__
+
+wallets_data/*
+
+db-data/*
