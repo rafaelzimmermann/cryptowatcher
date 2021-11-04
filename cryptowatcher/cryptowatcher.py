@@ -9,8 +9,8 @@ from config import Config
 from getprices import get_prices, Price
 
 registry = CollectorRegistry()
-gprice = Gauge('crypto_price', 'Price', labelnames=['symbol', 'ticker', 'fiat'], registry=registry)
-gbalance = Gauge('crypto_balance', 'Balance', labelnames=['symbol', 'ticker', 'fiat'], registry=registry)
+gprice = Gauge('crypto_price', 'Price', labelnames=['symbol', 'ticker', 'fiat', 'source'], registry=registry)
+gbalance = Gauge('crypto_balance', 'Balance', labelnames=['symbol', 'ticker', 'fiat', 'source'], registry=registry)
 
 
 def my_auth_handler(url, method, timeout, headers, data):
@@ -20,11 +20,11 @@ def my_auth_handler(url, method, timeout, headers, data):
 
 
 def push_price(price: Price):
-    gprice.labels(symbol=price.symbol, ticker=price.ticker, fiat=price.fiat).set(price.price)
+    gprice.labels(symbol=price.symbol, ticker=price.ticker, fiat=price.fiat, source=price.source).set(price.price)
 
 
 def push_balance(price: Price, balance: float):
-    gbalance.labels(symbol=price.symbol, ticker=price.ticker, fiat=price.fiat).set(balance)
+    gbalance.labels(symbol=price.symbol, ticker=price.ticker, fiat=price.fiat, source=price.source).set(balance)
 
 
 def main():
@@ -32,10 +32,10 @@ def main():
     conf = Config(path + "/config.json")
 
     for currency in conf.currencies:
-        for price in get_prices(conf.tickers, currency):
+        for price in get_prices(conf.tickers, currency, conf):
             push_price(price)
 
-        for price in get_prices(sorted(conf.wallet.keys()), currency):
+        for price in get_prices(sorted(conf.wallet.keys()), currency, conf):
             balance = price.price * conf.wallet[price.ticker] if price else 0.0
             push_balance(price, balance)
 

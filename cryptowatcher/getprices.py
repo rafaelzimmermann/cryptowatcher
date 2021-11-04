@@ -2,17 +2,22 @@ import json
 from typing import List, Optional
 
 import requests
+from requests import Session, TooManyRedirects
+
+from config import Config
 
 BINANCE_URL = "https://www.binance.com/api/v3/ticker/price"
 BINANCE_EXCHANGE_INFO = "https://api.binance.com/api/v3/exchangeInfo"
+COIN_MARKET_CAP_QUOTE_URL = 'https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest'
 
 
 class Price:
-    def __init__(self, ticker: str, fiat: str, symbol: str, price: float):
+    def __init__(self, ticker: str, fiat: str, symbol: str, price: float, source="binance"):
         self.ticker = ticker
         self.fiat = fiat
         self.symbol = symbol
         self.price = price
+        self.source = source
 
     def __str__(self):
         return f"{self.symbol}\t{self.price:,.8f}".replace(".", "%").replace(",", ".").replace("%", ",")
@@ -25,6 +30,28 @@ def get_price(ticker: str, currency: str) -> Optional[Price]:
         resp_json = response.json()
         return Price(ticker=ticker, fiat=currency, symbol=resp_json["symbol"], price=float(resp_json["price"]))
     except:
+        return None
+
+
+def get_price_coinmarketcap(ticker: str, currency: str, api_key: str) -> Optional[Price]:
+    parameters = {
+        'symbol': ticker,
+        'convert': currency
+    }
+    headers = {
+        'Accepts': 'application/json',
+        'X-CMC_PRO_API_KEY': api_key,
+    }
+
+    session = Session()
+    session.headers.update(headers)
+
+    try:
+        response = session.get(COIN_MARKET_CAP_QUOTE_URL, params=parameters)
+        data = json.loads(response.text)
+        price = data["data"][ticker]["quote"][currency]["price"]
+        return Price(ticker=ticker, fiat=currency, symbol=f"{ticker}{currency}", price=price, source="coinmarketcap")
+    except (ConnectionError, TimeoutError, TooManyRedirects) as e:
         return None
 
 
@@ -48,7 +75,7 @@ def get_available_symbols() -> list:
     return [item["symbol"] for item in resp_json["symbols"]]
 
 
-def get_prices(tickers: List[str], currency: str):
+def get_prices(tickers: List[str], currency: str, config: Config):
     available_symbols = get_available_symbols()
     prices = []
     for ticker in tickers:
@@ -57,6 +84,8 @@ def get_prices(tickers: List[str], currency: str):
             price = get_price(ticker, currency)
         else:
             price = resolve_price(available_symbols, ticker, currency)
+        if not price and config.coin_market_cap:
+            price = get_price_coinmarketcap(ticker, currency, config.coin_market_cap["apiKey"])
 
         if price:
             prices.append(price)
@@ -66,13 +95,12 @@ def get_prices(tickers: List[str], currency: str):
 
 
 def main():
-    with open("config.json") as f:
-        conf = json.load(f)
-        for currency in conf["currencies"]:
-            print(currency)
-            for p in get_prices(conf["tickers"], currency):
-                print(p)
-            print("--------")
+    conf = Config("config.json")
+    for currency in conf.currencies:
+        print(currency)
+        for p in get_prices(conf.tickers, currency, conf):
+            print(p)
+        print("--------")
 
 
 if __name__ == '__main__':
