@@ -1,4 +1,5 @@
 import json
+import time
 from typing import List, Optional
 
 import requests
@@ -12,12 +13,21 @@ COIN_MARKET_CAP_QUOTE_URL = 'https://pro-api.coinmarketcap.com/v1/cryptocurrency
 
 
 class Price:
-    def __init__(self, ticker: str, fiat: str, symbol: str, price: float, source="binance"):
+    def __init__(self, ticker: str, fiat: str, symbol: str, price: float, source="binance", time: float = time.time()):
         self.ticker = ticker
         self.fiat = fiat
         self.symbol = symbol
         self.price = price
         self.source = source
+        self.time = time
+
+    def to_csv(self):
+        return f"{self.ticker},{self.fiat},{self.symbol},{self.price},{self.source},{time.time()}"
+
+    @staticmethod
+    def from_csv(line):
+        parts = line.split(',')
+        return Price(ticker=parts[0], fiat=parts[1], symbol=parts[2], price=float(parts[3]), source=parts[4], time=float(parts[5]))
 
     def __str__(self):
         return f"{self.symbol}\t{self.price:,.8f}".replace(".", "%").replace(",", ".").replace("%", ",")
@@ -28,12 +38,38 @@ def get_price(ticker: str, currency: str) -> Optional[Price]:
         symbol = f"{ticker}{currency}"
         response = requests.request(method="GET", url=BINANCE_URL, params={"symbol": symbol})
         resp_json = response.json()
-        return Price(ticker=ticker, fiat=currency, symbol=resp_json["symbol"], price=float(resp_json["price"]))
+        p = Price(ticker=ticker, fiat=currency, symbol=resp_json["symbol"], price=float(resp_json["price"]))
+        save_price(p)
+        return p
     except:
-        return None
+        return load_price(ticker, currency)
 
 
-def get_price_coinmarketcap(ticker: str, currency: str, api_key: str) -> Optional[Price]:
+def load_price(ticker: str, fiat: str) -> Price:
+    try:
+        with open(f'price_cache_{ticker}_{fiat}', 'r') as _f:
+            return Price.from_csv(_f.read())
+    except:
+        None
+
+
+def save_price(price: Price):
+    try:
+        with open(f'price_cache_{price.ticker}_{price.fiat}', 'w') as _f:
+            _f.write(price.to_csv())
+    except Exception as e:
+        print(e)
+
+
+def eleapsed_time_minutes(start, end):
+    return (end - start) / 60
+
+
+def get_price_coinmarketcap(ticker: str, currency: str, api_key: str, rate_min: int) -> Optional[Price]:
+    old_price = load_price(ticker, currency)
+    if old_price and eleapsed_time_minutes(old_price.time, time.time()) < rate_min:
+        return old_price
+
     parameters = {
         'symbol': ticker,
         'convert': currency
@@ -50,9 +86,11 @@ def get_price_coinmarketcap(ticker: str, currency: str, api_key: str) -> Optiona
         response = session.get(COIN_MARKET_CAP_QUOTE_URL, params=parameters)
         data = json.loads(response.text)
         price = data["data"][ticker]["quote"][currency]["price"]
-        return Price(ticker=ticker, fiat=currency, symbol=f"{ticker}{currency}", price=price, source="coinmarketcap")
-    except (ConnectionError, TimeoutError, TooManyRedirects) as e:
-        return None
+        p = Price(ticker=ticker, fiat=currency, symbol=f"{ticker}{currency}", price=price, source="coinmarketcap")
+        save_price(p)
+        return p
+    except Exception as e:
+        return old_price
 
 
 def resolve_price(available_symbols: List[str], ticker: str, currency: str) -> Optional[Price]:
@@ -85,7 +123,7 @@ def get_prices(tickers: List[str], currency: str, config: Config):
         else:
             price = resolve_price(available_symbols, ticker, currency)
         if not price and config.coin_market_cap:
-            price = get_price_coinmarketcap(ticker, currency, config.coin_market_cap["apiKey"])
+            price = get_price_coinmarketcap(ticker, currency, config.coin_market_cap["apiKey"], 10)
 
         if price:
             prices.append(price)
@@ -105,4 +143,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
