@@ -34,9 +34,12 @@ class Balance:
                 wallet_balance[transaction.fee_currency] = 0
             wallet_balance[transaction.fee_currency] += transaction.fee_amount
 
-        for c in transaction.currencies:
-            if c in wallet_balance and wallet_balance[c] < MIN_VAL:
-                wallet_balance[c] = 0
+    def adjust_balance(self):
+        for wallet_key in self.balance:
+            wallet = self.balance[wallet_key]
+            for key in wallet:
+                if wallet[key] < MIN_VAL:
+                    wallet[key] = 0
 
     def __repr__(self):
         result = {}
@@ -57,4 +60,5 @@ class BalanceCalculator:
     def calculate_from_beginning(self):
         for t in self.storage.all_transactions():
             self.balance.add_transaction(t)
+        self.balance.adjust_balance()
         print(self.balance)

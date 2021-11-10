@@ -1,20 +1,16 @@
 import math
-from abc import ABC, abstractmethod
+from abc import ABC
+
 from pathlib import Path
 from typing import List
 
-from transaction import Transaction, DATE_FORMAT
+from transaction import Transaction
 from wallet import WALLET_EXODUS
+from wallet import WALLETS_PRECISION
+from parser.parser import Parser
 from datetime import datetime
 
-from wallet import WALLETS_PRECISION
-
-
-class Parser(ABC):
-
-    @abstractmethod
-    def transactions(self):
-        pass
+DATE_FORMAT = "%a %b %d %Y %H:%M:%S %Z%z"
 
 
 class ExodusParser(Parser, ABC):
@@ -65,7 +61,7 @@ class ExodusParser(Parser, ABC):
         return transactions
 
     @staticmethod
-    def _load_transcations(dir_path: str) -> dict:
+    def _load_transcations(dir_path: str) -> List:
         pathlist = Path(dir_path).glob('*.csv')
         transactions = []
         for path in pathlist:

@@ -1,5 +1,4 @@
 #!/usr/local/bin/python
-
 import os
 
 from prometheus_client import CollectorRegistry, Gauge, push_to_gateway
