@@ -1,6 +1,4 @@
 import math
-import hashlib
-import sys
 from abc import ABC
 
 from pathlib import Path
@@ -26,13 +24,6 @@ class BinanceParser(Parser, ABC):
         self._transactions = self._load_transcations(dir_path)
 
     @staticmethod
-    def _create_txid(transaction: Transaction) -> Transaction:
-        m = hashlib.sha1()
-        m.update(str(transaction).encode("UTF8"))
-        transaction.txid = m.hexdigest()
-        return transaction
-
-    @staticmethod
     def _parse_amount(value) -> int:
         return int(float(value) * math.pow(10, WALLETS_PRECISION[WALLET_BINANCE])) if len(value) else 0
 
@@ -46,27 +37,30 @@ class BinanceParser(Parser, ABC):
         date = BinanceParser._parse_date(parts)
         amount = BinanceParser._parse_amount(parts[5])
         if "fee" in parts[3].lower():
-            return BinanceParser._create_txid(Transaction(
+            t = Transaction(
                 date=date,
                 transaction_type=EXCHANGE,
                 wallet=WALLET_BINANCE,
                 fee_amount=amount,
-                fee_currency=parts[4]))
+                fee_currency=parts[4])
+            return t.create_txid()
 
         if amount > 0:
-            return BinanceParser._create_txid(Transaction(
+            t = Transaction(
                 date=date,
                 transaction_type=DEPOSIT,
                 wallet=WALLET_BINANCE,
                 in_amount=amount,
-                in_currency=parts[4]))
+                in_currency=parts[4])
+            return t.create_txid()
 
-        return BinanceParser._create_txid(Transaction(
+        t = Transaction(
             date=date,
             transaction_type=WITHDRAWAL,
             wallet=WALLET_BINANCE,
             out_amount=amount,
-            out_currency=parts[4]))
+            out_currency=parts[4])
+        return t.create_txid()
 
     @staticmethod
     def _adjust_line(line):

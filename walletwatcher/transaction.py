@@ -1,5 +1,6 @@
 import json
 import math
+import hashlib
 from datetime import datetime
 
 from wallet import WALLETS_PRECISION
@@ -59,6 +60,12 @@ class Transaction:
         for key in delete_keys:
             del result[key]
         return result
+
+    def create_txid(self):
+        m = hashlib.sha1()
+        m.update(str(self).encode("UTF8"))
+        self.txid = m.hexdigest()
+        return self
 
     @property
     def date(self) -> str:
