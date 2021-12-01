@@ -41,23 +41,27 @@ class Balance:
                 if wallet[key] < MIN_VAL:
                     wallet[key] = 0
 
-    def __repr__(self):
+    def to_dict(self) -> dict:
         result = {}
         for wallet in self.balance:
             result[wallet] = {}
             for key in self.balance[wallet]:
                 if self.balance[wallet][key] > 0:
                     result[wallet][key] = self.balance[wallet][key] / float(math.pow(10, WALLETS_PRECISION[1]))
-        return json.dumps(result)
+        return result
+
+    def __repr__(self):
+        return json.dumps(self.to_dict())
 
 
 class BalanceCalculator:
 
     def __init__(self, storage: TransactionStorage):
         self.storage = storage
-        self.balance = Balance()
 
-    def calculate_from_beginning(self):
+    def calculate_from_beginning(self) -> Balance:
+        balance = Balance()
         for t in self.storage.all_transactions():
-            self.balance.add_transaction(t)
-        self.balance.adjust_balance()
+            balance.add_transaction(t)
+        balance.adjust_balance()
+        return balance

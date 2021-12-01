@@ -3,8 +3,8 @@
 clean-db:
 	rm -rf db-data/*
 
-clean-all: clean-db
-	docker-compose rm -f && docker image rm cryptowatch_walletwatcher || true
+clean: clean-db
+	docker-compose down --rmi all -v --remove-orphans
 
 stop:
 	docker-compose stop

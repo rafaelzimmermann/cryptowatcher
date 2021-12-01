@@ -108,6 +108,7 @@ services:
 
   nginx:
     build: ./walletwatcher-nginx
+    container_name: walletwatcher_nginx
     volumes:
       - ./walletwatcher-nginx/static:/app/static
     ports:
