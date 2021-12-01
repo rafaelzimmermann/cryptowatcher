@@ -1,0 +1,9 @@
+:root {
+  --background: hsl(244, 0%, 16%);
+}
+
+body {
+    background-color: var(--background);
+    overflow: hidden;
+    max-height: 100%;
+}

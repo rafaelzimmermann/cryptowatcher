@@ -1,18 +1,29 @@
 FROM python:3.9.7-slim-buster
 
-RUN apt-get update
-RUN apt-get -y install cron
+# create the app user
+RUN addgroup --system app && adduser --system --group app
+
+# create the appropriate directories
+ENV HOME=/app
+RUN mkdir $HOME
+WORKDIR $HOME
+
+# install dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends netcat
+COPY requirements.txt .
 RUN pip install --upgrade pip
+RUN pip install -r requirements.txt
 
-RUN echo "*/1 * * * * root /app/balanceimporter.py > /proc/1/fd/1 2>/proc/1/fd/2" > /etc/cron.d/balanceimporter_job
-RUN chmod 0644 /etc/cron.d/balanceimporter_job
+# copy entrypoint-prod.sh
+COPY ./entrypoint.sh $HOME
 
-RUN mkdir -p /var/log
-RUN touch /var/log/cron.log
+# copy project
+COPY . $HOME
 
-RUN mkdir /app
-ADD . /app/
-RUN chmod u+x /app/balanceimporter.py
-RUN pip install -r /app/requirements.txt
+# chown all the files to the app user
+RUN chown -R app:app $HOME
 
-CMD cron && tail -f /var/log/cron.log
+# change to the app user
+USER app
+
+ENTRYPOINT ["bash", "/app/entrypoint.sh"]

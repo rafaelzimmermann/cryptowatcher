@@ -61,4 +61,3 @@ class BalanceCalculator:
         for t in self.storage.all_transactions():
             self.balance.add_transaction(t)
         self.balance.adjust_balance()
-        print(self.balance)

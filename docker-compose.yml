@@ -85,11 +85,18 @@ services:
     labels:
       org.label-schema.group: "database"
 
-
   walletwatcher:
     build:
       context: ./walletwatcher
       dockerfile: Dockerfile
+    command: gunicorn --bind 0.0.0.0:5000 app:app
+    environment:
+      SQL_HOST: postgres
+      SQL_PORT: 5432
+    expose:
+      - 5000
+    ports:
+      - 5000:5000
     depends_on:
       - postgres
     container_name: walletwatcher
@@ -98,6 +105,15 @@ services:
     restart: unless-stopped
     labels:
       org.label-schema.group: "importer"
+
+  nginx:
+    build: ./walletwatcher-nginx
+    volumes:
+      - ./walletwatcher-nginx/static:/app/static
+    ports:
+      - 1337:80
+    depends_on:
+      - walletwatcher
 
 networks:
   default:
