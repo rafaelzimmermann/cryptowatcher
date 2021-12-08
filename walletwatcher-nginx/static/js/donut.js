@@ -36,12 +36,15 @@ var config = {
 
 var getSimpleBalance = function() {
     return fetch("/v1/balance")
+            .then(response => response.json())
             .then(function(balance) {
                 var result = {};
                 for (var wallet in balance) {
                     for (var ticker in balance[wallet]) {
                         if (result.hasOwnProperty(ticker)) {
-                            result += balance[wallet][ticker];
+                            result[ticker] += balance[wallet][ticker];
+                        } else {
+                            result[ticker] = balance[wallet][ticker];
                         }
                     }
                 }
@@ -53,7 +56,7 @@ var updateChart = function(balance) {
     tickers = Object.keys(balance);
     balances = [];
     tickers.forEach((t) => {
-        balance.push(balance[t]);
+        balances.push(balance[t]);
     });
     const data = {
       labels: tickers,
