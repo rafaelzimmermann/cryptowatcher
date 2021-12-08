@@ -13,20 +13,8 @@ const COLORS = [
   '#8549ba'
 ];
 
-const data = {
-  labels: ['Red', 'Orange', 'Yellow', 'Green', 'Blue'],
-  datasets: [
-    {
-      label: 'Dataset 1',
-      data: [10, 20, 30, 40, 50],
-      backgroundColor: COLORS,
-    }
-  ]
-};
-
-const config = {
+var config = {
   type: 'doughnut',
-  data: data,
   options: {
     responsive: true,
     aspectRatio: 1,
@@ -46,10 +34,44 @@ const config = {
   },
 };
 
-const ctx = document.getElementById('balance').getContext('2d');
-const myChart = new Chart(ctx, config);
+var getSimpleBalance = function() {
+    return fetch("/v1/balance")
+            .then(function(balance) {
+                var result = {};
+                for (var wallet in balance) {
+                    for (var ticker in balance[wallet]) {
+                        if (result.hasOwnProperty(ticker)) {
+                            result += balance[wallet][ticker];
+                        }
+                    }
+                }
+                return result;
+            });
+}
 
+var updateChart = function(balance) {
+    tickers = Object.keys(balance);
+    balances = [];
+    tickers.forEach((t) => {
+        balance.push(balance[t]);
+    });
+    const data = {
+      labels: tickers,
+      datasets: [
+        {
+          label: 'Balance',
+          data: balances,
+          backgroundColor: COLORS,
+        }
+      ]
+    };
+    config.data = data;
+    const ctx = document.getElementById('balance').getContext('2d');
+    const myChart = new Chart(ctx, config);
+}
 
+getSimpleBalance()
+    .then(updateChart);
 
 const actions = [
   {

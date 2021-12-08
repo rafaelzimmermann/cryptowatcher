@@ -1,10 +1,10 @@
 
 
-clean-db:
-	rm -rf db-data/*
-
-clean: clean-db
+clean:
 	docker-compose down --rmi all -v --remove-orphans
+
+clean-all: clean
+	rm -rf db-data/*
 
 stop:
 	docker-compose stop
