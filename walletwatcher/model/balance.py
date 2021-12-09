@@ -1,53 +1,23 @@
-import json
+from typing import List
+
 import math
 
-from model.transaction import Transaction
-from model.wallet import Wallet, WALLETS_PRECISION
-
-MIN_VAL = 10
+from price.config import Config
+from price.getprices import get_prices
 
 
 class Balance:
 
-    def __init__(self):
-        self.balance = {}
+    def __init__(self, ticker: str, amount: int = 0, fiat: List = ["EUR"]):
+        self.ticker = ticker
+        self.amount = amount
+        self.fiat = {x: 0 for x in fiat}
 
-    def add_transaction(self, transaction: Transaction):
-        wallet_name = Wallet.wallet_name(transaction.wallet)
-        if wallet_name not in self.balance:
-            self.balance[wallet_name] = {}
-        wallet_balance = self.balance[wallet_name]
+    def update_fiat(self, config: Config):
+        for f in self.fiat:
+            get_prices(self.fiat.keys(), f, config)
 
-        if transaction.in_amount != 0:
-            if transaction.in_currency not in wallet_balance:
-                wallet_balance[transaction.in_currency] = 0
-            wallet_balance[transaction.in_currency] += transaction.in_amount
+    @property
+    def amount_float(self):
+        return self.amount / math.pow(10, 8)
 
-        if transaction.out_amount != 0:
-            if transaction.out_currency not in wallet_balance:
-                wallet_balance[transaction.out_currency] = 0
-            wallet_balance[transaction.out_currency] += transaction.out_amount
-
-        if transaction.fee_amount != 0:
-            if transaction.fee_currency not in wallet_balance:
-                wallet_balance[transaction.fee_currency] = 0
-            wallet_balance[transaction.fee_currency] += transaction.fee_amount
-
-    def adjust_balance(self):
-        for wallet_key in self.balance:
-            wallet = self.balance[wallet_key]
-            for key in wallet:
-                if wallet[key] < MIN_VAL:
-                    wallet[key] = 0
-
-    def to_dict(self) -> dict:
-        result = {}
-        for wallet in self.balance:
-            result[wallet] = {}
-            for key in self.balance[wallet]:
-                if self.balance[wallet][key] > 0:
-                    result[wallet][key] = self.balance[wallet][key] / float(math.pow(10, WALLETS_PRECISION[1]))
-        return result
-
-    def __repr__(self):
-        return json.dumps(self.to_dict())

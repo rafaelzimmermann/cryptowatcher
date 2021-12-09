@@ -1,6 +1,8 @@
 #!/usr/local/bin/python
 
 from typing import List
+
+from parser.exodus import ExodusParser
 from parser.parser import Parser
 
 from storage.transactionstorage import TransactionStorage
@@ -12,7 +14,8 @@ from parser.daedalus import DaedalusParser
 PARSERS = {
     "binance": BinanceParser,
     "cryptocom": CryptoComParser,
-    "daedalus": DaedalusParser
+    "daedalus": DaedalusParser,
+    "exodus": ExodusParser
 }
 
 
@@ -27,16 +30,3 @@ def exec_import(parsers: List[Parser]):
         storage.save(parser.transactions())
     balance_calculator = BalanceCalculator(storage)
     balance_calculator.calculate_from_beginning()
-
-
-def calc_balance(parser: Parser):
-    balance = Balance()
-    for t in parser.transactions():
-        balance.add_transaction(t)
-    balance.adjust_balance()
-    print(balance)
-
-
-if __name__ == '__main__':
-    # exec_import(parsers=[ExodusParser('/wallets_data/exodus')])
-    calc_balance(DaedalusParser('/wallets_data/daedalus'))

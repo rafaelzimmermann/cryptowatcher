@@ -3,9 +3,9 @@ import time
 from typing import List, Optional
 
 import requests
-from requests import Session, TooManyRedirects
+from requests import Session
 
-from config import Config
+from price.config import Config
 
 BINANCE_URL = "https://www.binance.com/api/v3/ticker/price"
 BINANCE_EXCHANGE_INFO = "https://api.binance.com/api/v3/exchangeInfo"
@@ -34,6 +34,7 @@ class Price:
 
 
 def get_price(ticker: str, currency: str) -> Optional[Price]:
+    print(f"Getting prices {ticker} {currency}")
     try:
         symbol = f"{ticker}{currency}"
         response = requests.request(method="GET", url=BINANCE_URL, params={"symbol": symbol})
@@ -113,7 +114,7 @@ def get_available_symbols() -> list:
     return [item["symbol"] for item in resp_json["symbols"]]
 
 
-def get_prices(tickers: List[str], currency: str, config: Config):
+def get_prices(tickers: List[str], currency: str, config: Config = None):
     available_symbols = get_available_symbols()
     prices = []
     for ticker in tickers:
@@ -122,7 +123,7 @@ def get_prices(tickers: List[str], currency: str, config: Config):
             price = get_price(ticker, currency)
         else:
             price = resolve_price(available_symbols, ticker, currency)
-        if not price and config.coin_market_cap:
+        if not price and config and config.coin_market_cap:
             price = get_price_coinmarketcap(ticker, currency, config.coin_market_cap["apiKey"], 10)
 
         if price:

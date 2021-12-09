@@ -26,8 +26,8 @@ def allowed_file(filename):
 @app.route("/v1/balance")
 def get_balance():
     bc = BalanceCalculator(transaction_storage)
-    balance = bc.calculate_from_beginning()
-    return jsonify(balance.to_dict())
+    portfolio = bc.calculate_from_beginning()
+    return jsonify(portfolio.to_dict())
 
 
 @app.route("/v1/wallet/<name>", methods=["POST"])

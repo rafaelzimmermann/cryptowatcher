@@ -42,9 +42,9 @@ var getSimpleBalance = function() {
                 for (var wallet in balance) {
                     for (var ticker in balance[wallet]) {
                         if (result.hasOwnProperty(ticker)) {
-                            result[ticker] += balance[wallet][ticker];
+                            result[ticker] += balance[wallet][ticker]["EUR"];
                         } else {
-                            result[ticker] = balance[wallet][ticker];
+                            result[ticker] = balance[wallet][ticker]["EUR"];
                         }
                     }
                 }
