@@ -1,9 +1,9 @@
 import psycopg2
 
 from typing import List, Optional
-from transaction import Transaction
+from model.transaction import Transaction
 
-from transaction import transaction_type_int, transaction_type_str
+from model.transaction import transaction_type_int, transaction_type_str
 
 
 def create_connection():

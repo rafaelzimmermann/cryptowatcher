@@ -1,10 +1,10 @@
 import os
 
-from flask import Flask, jsonify, request, redirect, url_for
+from flask import Flask, jsonify, request
 
-from transactionstorage import TransactionStorage
-from balancecalculator import BalanceCalculator
-from balanceimporter import import_csv
+from storage.transactionstorage import TransactionStorage
+from balance.balancecalculator import BalanceCalculator
+from balance.balanceimporter import import_csv
 from werkzeug.utils import secure_filename
 
 

@@ -4,8 +4,8 @@ import os
 from prometheus_client import CollectorRegistry, Gauge, push_to_gateway
 from prometheus_client.exposition import basic_auth_handler
 
-from config import Config
-from getprices import get_prices, Price
+from price.config import Config
+from price.getprices import get_prices, Price
 
 registry = CollectorRegistry()
 gprice = Gauge('crypto_price', 'Price', labelnames=['symbol', 'ticker', 'fiat', 'source'], registry=registry)

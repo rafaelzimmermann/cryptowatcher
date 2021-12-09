@@ -4,9 +4,9 @@ from abc import ABC
 from pathlib import Path
 from typing import List
 
-from transaction import Transaction
-from wallet import WALLET_EXODUS
-from wallet import WALLETS_PRECISION
+from model.transaction import Transaction
+from model.wallet import WALLET_EXODUS
+from model.wallet import WALLETS_PRECISION
 from parser.parser import Parser
 from datetime import datetime
 

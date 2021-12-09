@@ -15,7 +15,7 @@ RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
 
 # copy entrypoint-prod.sh
-COPY ./entrypoint.sh $HOME
+COPY ./script/entrypoint.sh $HOME
 
 # copy project
 COPY . $HOME

@@ -55,18 +55,6 @@ services:
     labels:
       org.label-schema.group: "monitoring"
 
-  cryptowatcher:
-    build:
-      context: ./cryptowatcher
-      dockerfile: Dockerfile
-    depends_on:
-      - pushgateway
-      - prometheus
-    container_name: cryptowatcher
-    restart: unless-stopped
-    labels:
-      org.label-schema.group: "application"
-
   postgres:
     image: postgres:14.0
     container_name: postgres

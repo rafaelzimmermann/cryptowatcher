@@ -3,8 +3,8 @@
 from typing import List
 from parser.parser import Parser
 
-from transactionstorage import TransactionStorage
-from balancecalculator import BalanceCalculator, Balance
+from storage.transactionstorage import TransactionStorage
+from balance.balancecalculator import BalanceCalculator, Balance
 from parser.binance import BinanceParser
 from parser.cryptocom import CryptoComParser
 from parser.daedalus import DaedalusParser
@@ -39,4 +39,4 @@ def calc_balance(parser: Parser):
 
 if __name__ == '__main__':
     # exec_import(parsers=[ExodusParser('/wallets_data/exodus')])
-    calc_balance(DaedalusParser('/Users/rzimmermann/personal_workspace/cryptowatch/wallets_data/daedalus'))
+    calc_balance(DaedalusParser('/wallets_data/daedalus'))

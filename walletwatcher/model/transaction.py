@@ -3,7 +3,7 @@ import math
 import hashlib
 from datetime import datetime
 
-from wallet import WALLETS_PRECISION
+from model.wallet import WALLETS_PRECISION
 
 DEPOSIT = "deposit"
 INTEREST = "interest"

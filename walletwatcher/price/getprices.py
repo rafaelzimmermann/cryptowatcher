@@ -133,7 +133,7 @@ def get_prices(tickers: List[str], currency: str, config: Config):
 
 
 def main():
-    conf = Config("config.json")
+    conf = Config("../config.json")
     for currency in conf.currencies:
         print(currency)
         for p in get_prices(conf.tickers, currency, conf):
