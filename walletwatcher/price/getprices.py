@@ -1,6 +1,7 @@
 import json
 import time
 from typing import List, Optional
+import concurrent.futures
 
 import requests
 from requests import Session
@@ -33,8 +34,7 @@ class Price:
         return f"{self.symbol}\t{self.price:,.8f}".replace(".", "%").replace(",", ".").replace("%", ",")
 
 
-def get_price(ticker: str, currency: str) -> Optional[Price]:
-    print(f"Getting prices {ticker} {currency}")
+def get_binance_price(ticker: str, currency: str) -> Optional[Price]:
     try:
         symbol = f"{ticker}{currency}"
         response = requests.request(method="GET", url=BINANCE_URL, params={"symbol": symbol})
@@ -48,7 +48,7 @@ def get_price(ticker: str, currency: str) -> Optional[Price]:
 
 def load_price(ticker: str, fiat: str) -> Price:
     try:
-        with open(f'price_cache_{ticker}_{fiat}', 'r') as _f:
+        with open(f'cache/price_cache_{ticker}_{fiat}', 'r') as _f:
             return Price.from_csv(_f.read())
     except:
         None
@@ -56,7 +56,7 @@ def load_price(ticker: str, fiat: str) -> Price:
 
 def save_price(price: Price):
     try:
-        with open(f'price_cache_{price.ticker}_{price.fiat}', 'w') as _f:
+        with open(f'cache/price_cache_{price.ticker}_{price.fiat}', 'w') as _f:
             _f.write(price.to_csv())
     except Exception as e:
         print(e)
@@ -96,14 +96,14 @@ def get_price_coinmarketcap(ticker: str, currency: str, api_key: str, rate_min: 
 
 def resolve_price(available_symbols: List[str], ticker: str, currency: str) -> Optional[Price]:
     if f"{ticker}{currency}" in available_symbols:
-        return get_price(ticker, currency)
+        return get_binance_price(ticker, currency)
     for symbol in available_symbols:
         if symbol.endswith(currency):
             bridge_ticker = symbol.replace(currency, "")
             bridge_symbol = f"{ticker}{bridge_ticker}"
             if bridge_symbol in available_symbols:
-                p1 = get_price(ticker, bridge_ticker)
-                p2 = get_price(symbol.replace(currency, ''), currency)
+                p1 = get_binance_price(ticker, bridge_ticker)
+                p2 = get_binance_price(symbol.replace(currency, ''), currency)
                 return Price(ticker=ticker, fiat=currency, symbol=f"{ticker}{currency}", price=p1.price * p2.price)
     return None
 
@@ -113,28 +113,38 @@ def get_available_symbols() -> list:
     resp_json = response.json()
     return [item["symbol"] for item in resp_json["symbols"]]
 
+def get_price(ticker, currency, available_symbols, config) -> Price:
+    symbol = ticker + currency
+    price = None
+    if symbol in available_symbols:
+        price = get_binance_price(ticker, currency)
+    else:
+        price = resolve_price(available_symbols, ticker, currency)
+    if not price and config and config.coin_market_cap:
+        price = get_price_coinmarketcap(ticker, currency, config.coin_market_cap["apiKey"], 10)
+    return price
+
 
 def get_prices(tickers: List[str], currency: str, config: Config = None):
     available_symbols = get_available_symbols()
     prices = []
-    for ticker in tickers:
-        symbol = ticker + currency
-        if symbol in available_symbols:
-            price = get_price(ticker, currency)
-        else:
-            price = resolve_price(available_symbols, ticker, currency)
-        if not price and config and config.coin_market_cap:
-            price = get_price_coinmarketcap(ticker, currency, config.coin_market_cap["apiKey"], 10)
-
-        if price:
-            prices.append(price)
-        else:
-            print(f"Failed to fetch {ticker} price")
+    futures = []
+    with concurrent.futures.ThreadPoolExecutor(max_workers = 10) as executor:
+        for ticker in tickers:
+            symbol = ticker + currency
+            futures.append(executor.submit(get_price, ticker, currency, available_symbols, config))
+        for future in concurrent.futures.as_completed(futures):
+            try:
+                price = future.result()
+                if price:
+                    prices.append(price)
+            except Exception as e:
+                print(e)        
     return prices
 
 
 def main():
-    conf = Config("../config.json")
+    conf = Config("config.json")
     for currency in conf.currencies:
         print(currency)
         for p in get_prices(conf.tickers, currency, conf):

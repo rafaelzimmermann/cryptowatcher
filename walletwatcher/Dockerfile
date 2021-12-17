@@ -6,6 +6,7 @@ RUN addgroup --system app && adduser --system --group app
 # create the appropriate directories
 ENV HOME=/app
 RUN mkdir $HOME
+RUN mkdir $HOME/cache
 WORKDIR $HOME
 
 # install dependencies

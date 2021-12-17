@@ -77,7 +77,7 @@ services:
     build:
       context: ./walletwatcher
       dockerfile: Dockerfile
-    command: gunicorn --bind 0.0.0.0:5000 app:app
+    command: gunicorn --bind 0.0.0.0:5000 -t 240 app:app
     environment:
       SQL_HOST: postgres
       SQL_PORT: 5432

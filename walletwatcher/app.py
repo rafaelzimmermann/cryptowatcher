@@ -5,6 +5,7 @@ from flask import Flask, jsonify, request
 from storage.transactionstorage import TransactionStorage
 from balance.balancecalculator import BalanceCalculator
 from balance.balanceimporter import import_csv
+from price.watcher import PriceWatcher
 from werkzeug.utils import secure_filename
 
 
@@ -15,6 +16,8 @@ UPLOAD_FOLDER = '/tmp'
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+price_watcher = PriceWatcher(app.logger)
+
 
 transaction_storage = TransactionStorage()
 
@@ -46,3 +49,9 @@ def import_wallet_csv(name):
         file.save(file_path)
         import_csv(app.config['UPLOAD_FOLDER'], name)
         return jsonify({}), 200
+    
+
+@app.route('/metrics')
+def track_prices():
+    return price_watcher.watch_price_metrics()
+    
