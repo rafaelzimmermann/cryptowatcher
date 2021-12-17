@@ -19,13 +19,3 @@ scrape_configs:
     scrape_interval: 10s
     static_configs:
       - targets: ['walletwatcher:5000']
-
-#  - job_name: 'nginx'
-#    scrape_interval: 10s
-#    static_configs:
-#      - targets: ['nginxexporter:9113']
-
-#  - job_name: 'aspnetcore'
-#    scrape_interval: 10s
-#    static_configs:
-#      - targets: ['eventlog-proxy:5000', 'eventlog:5000']

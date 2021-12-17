@@ -44,17 +44,6 @@ services:
     labels:
       org.label-schema.group: "monitoring"
 
-  pushgateway:
-    image: prom/pushgateway:v1.2.0
-    container_name: pushgateway
-    restart: unless-stopped
-    expose:
-      - 9091
-    ports:
-      - 9091:9091
-    labels:
-      org.label-schema.group: "monitoring"
-
   postgres:
     image: postgres:14.0
     container_name: postgres

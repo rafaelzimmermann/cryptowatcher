@@ -17,8 +17,6 @@ UPLOAD_FOLDER = '/tmp'
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 price_watcher = PriceWatcher(app.logger)
-
-
 transaction_storage = TransactionStorage()
 
 
