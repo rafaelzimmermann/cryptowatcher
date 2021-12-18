@@ -10,6 +10,8 @@ from werkzeug.utils import secure_filename
 
 
 BAD_REQUEST = 400
+DEFAULT_LIMIT = 10
+DEFAULT_OFFSET = 0
 
 ALLOWED_EXTENSIONS = {'csv'}
 UPLOAD_FOLDER = '/tmp'
@@ -23,12 +25,30 @@ transaction_storage = TransactionStorage()
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
+def get_int_param(name: str, default_val: int) -> int:
+    try:
+        value = int(request.args.get(name))
+    except:
+        return default_val
+    if not value:
+        return default_val
+    return value
+
 
 @app.route("/v1/balance")
 def get_balance():
     bc = BalanceCalculator(transaction_storage)
     portfolio = bc.calculate_from_beginning()
     return jsonify(portfolio.to_dict())
+
+@app.route("/v1/transactions")
+def get_transactions():
+    bc = BalanceCalculator(transaction_storage)
+    limit = get_int_param('limit', DEFAULT_LIMIT)
+    offset = get_int_param('offset', DEFAULT_OFFSET)
+
+    result = [t.to_dict() for t in bc.get_transactions(limit=limit, offset=offset)]
+    return jsonify(result)
 
 
 @app.route("/v1/wallet/<name>", methods=["POST"])

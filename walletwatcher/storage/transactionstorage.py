@@ -87,3 +87,18 @@ class TransactionStorage:
         for row in cursor.fetchall():
             transactions.append(self._parse_row(row))
         return transactions
+
+    def get_transactions(self, limit: int, offset: int) -> List[Transaction]:
+        cursor = self.connection.cursor()
+        cursor.execute('''
+        SELECT id, date, type, wallet, out_amount, out_currency, fee_amount, fee_currency, in_amount, in_currency, txid
+        FROM transaction
+        ORDER by date
+        LIMIT %s
+        OFFSET %s
+        ''', (limit, offset,))
+        transactions = []
+        for row in cursor.fetchall():
+            transactions.append(self._parse_row(row))
+        return transactions
+

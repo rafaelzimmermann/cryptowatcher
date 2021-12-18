@@ -12,3 +12,6 @@ class BalanceCalculator:
         portfolio = Portfolio()
         portfolio.add_transactions(self.storage.all_transactions())
         return portfolio
+
+    def get_transactions(self, limit: int = 25, offset: int = 0):
+        return self.storage.get_transactions(limit, offset)
