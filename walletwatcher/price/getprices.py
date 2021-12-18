@@ -97,6 +97,10 @@ def get_price_coinmarketcap(ticker: str, currency: str, api_key: str, rate_min: 
 def resolve_price(available_symbols: List[str], ticker: str, currency: str) -> Optional[Price]:
     if f"{ticker}{currency}" in available_symbols:
         return get_binance_price(ticker, currency)
+    if f"{currency}{ticker}" in available_symbols:
+        p = get_binance_price(currency, ticker)
+        return Price(ticker, currency, f"{currency}{ticker}", 1/p.price)
+
     for symbol in available_symbols:
         if symbol.endswith(currency):
             bridge_ticker = symbol.replace(currency, "")
@@ -147,9 +151,12 @@ def main():
     conf = Config("config.json")
     for currency in conf.currencies:
         print(currency)
-        for p in get_prices(conf.tickers, currency, conf):
-            print(p)
-        print("--------")
+        prices = get_prices(conf.tickers, currency, conf)
+        for ticker in conf.tickers:
+            for p in prices:
+                if ticker == p.ticker:
+                    print(p)
+                    break
 
 
 if __name__ == '__main__':
