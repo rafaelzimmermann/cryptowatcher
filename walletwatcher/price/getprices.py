@@ -99,7 +99,7 @@ def resolve_price(available_symbols: List[str], ticker: str, currency: str) -> O
         return get_binance_price(ticker, currency)
     if f"{currency}{ticker}" in available_symbols:
         p = get_binance_price(currency, ticker)
-        return Price(ticker, currency, f"{currency}{ticker}", 1/p.price)
+        return Price(ticker=ticker, currency=currency, symbol=f"{currency}{ticker}", price=1/p.price)
 
     for symbol in available_symbols:
         if symbol.endswith(currency):
