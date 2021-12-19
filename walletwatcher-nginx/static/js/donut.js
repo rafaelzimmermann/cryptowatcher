@@ -21,6 +21,9 @@ var config = {
     borderColor: '#292929',
     offset: 2,
     cutout: "97%",
+    layout: {
+        padding: 20
+    },
     plugins: {
       legend: {
         display: false
@@ -60,31 +63,13 @@ var centerTitlePlugin = {
   }
 }
 
-var getSimpleBalance = function() {
-  return fetch("/v1/balance")
-    .then(response => response.json())
-    .then(function(balance) {
-        var result = {};
-        for (var wallet in balance) {
-            for (var ticker in balance[wallet]) {
-                if (result.hasOwnProperty(ticker)) {
-                    result[ticker] += balance[wallet][ticker]["EUR"];
-                } else {
-                    result[ticker] = balance[wallet][ticker]["EUR"];
-                }
-            }
-        }
-        return result;
-    });
-}
-
 var updateChart = function(balance) {
     tickers = Object.keys(balance);
     balances = [];
     total = 0;
     tickers.forEach((t) => {
-        balances.push(balance[t]);
-        total += balance[t];
+        balances.push(balance[t]["value"]);
+        total += balance[t]["value"];
     });
     const data = {
       labels: tickers,

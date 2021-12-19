@@ -53,7 +53,7 @@ class Wallet:
 
         prices = get_prices([b.ticker for b in self.balance.values()], self.fiat[0])
         for price in prices:
-            if prices:
+            if price:
                 result[price.ticker][self.fiat[0]] = price.price * result[price.ticker]["amount"]
         return result
 
