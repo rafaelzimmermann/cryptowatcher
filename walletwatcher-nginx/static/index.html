@@ -31,7 +31,7 @@
       <div class="row">
         <div class="col">
         </div>
-        <div class="col-6">
+        <div class="col-8">
           <canvas id="balance" width="700" height="700px"></canvas>
         </div>
         <div class="col">
@@ -40,7 +40,7 @@
     
       <div class="row" id="app">
         <div class="col"></div>
-        <div class="col-6">
+        <div class="col-8">
             <table class="table table-dark table-borderless">
                 <thead>
                   <th scope="col">Asset</th>
@@ -49,15 +49,15 @@
                   <th scope="col">Value</th>
                 </thead>
                 <tbody>
-                  <tr class="table-active" v-for="(b, ticker) in balance">
+                  <tr class="table-active" v-for="b in balance">
                     <th scope="row">
-                        <object type="image/svg+xml" :data="icon(ticker)" width="32" height="32">
+                        <object type="image/svg+xml" :data="icon(b)" width="32" height="32">
                             <img src="/icons/generic.png" alt="No SVG support" width="32" height="32">
                         </object>   
                     </th>
-                    <td>{{ ticker }}</td>
-                    <td>{{ b.amount }}</td>
-                    <td>{{ b.value }}</td>
+                    <td>{{ b.ticker }}</td>
+                    <td>{{ b.amount.toFixed(4) }}</td>
+                    <td>€ {{ b.value.toFixed(2) }}</td>
                   </tr>
                 </tbody>
               </table>

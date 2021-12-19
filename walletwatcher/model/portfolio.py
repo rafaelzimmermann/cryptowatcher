@@ -2,12 +2,14 @@ from typing import List
 
 from model.transaction import Transaction
 from model.wallet import Wallet
+from price.priceservice import PriceService
 
 
 class Portfolio:
 
-    def __init__(self):
+    def __init__(self, price_service: PriceService):
         self.wallets = {}
+        self.price_service = price_service
 
     def add_transactions(self, transactions: List[Transaction]):
         for transaction in transactions:
@@ -25,7 +27,7 @@ class Portfolio:
             if transaction.fee_amount != 0:
                 wallet.deposit(transaction.fee_currency, transaction.fee_amount)
         for wallet in self.wallets.values():
-            wallet.adjust_balance()
+            wallet.adjust_balance(self.price_service)
 
     def to_dict(self):
         wallets = self.wallets.values()

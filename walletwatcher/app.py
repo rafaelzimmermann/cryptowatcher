@@ -1,3 +1,4 @@
+import json
 import os
 
 from flask import Flask, jsonify, request
@@ -6,6 +7,8 @@ from storage.transactionstorage import TransactionStorage
 from balance.balancecalculator import BalanceCalculator
 from balance.balanceimporter import import_csv
 from price.watcher import PriceWatcher
+from price.priceservice import PriceService
+from price.config import Config
 from werkzeug.utils import secure_filename
 
 
@@ -18,8 +21,11 @@ UPLOAD_FOLDER = '/tmp'
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-price_watcher = PriceWatcher(app.logger)
+
 transaction_storage = TransactionStorage()
+config = Config('config.json')
+price_service = PriceService(config)
+price_watcher = PriceWatcher(price_service=price_service, conf=config, logger=app.logger)
 
 
 def allowed_file(filename):
@@ -35,15 +41,20 @@ def get_int_param(name: str, default_val: int) -> int:
     return value
 
 
+@app.route("/v1/price/<ticker>/<currency>")
+def get_price(ticker, currency):
+    return jsonify(price_service.prices(tickers=[ticker], currency=currency))
+
 @app.route("/v1/balance")
 def get_balance():
-    bc = BalanceCalculator(transaction_storage)
+    bc = BalanceCalculator(transaction_storage, price_service)
     portfolio = bc.calculate_from_beginning()
+
     return jsonify(portfolio.to_dict())
 
 @app.route("/v1/transactions")
 def get_transactions():
-    bc = BalanceCalculator(transaction_storage)
+    bc = BalanceCalculator(transaction_storage, price_service)
     limit = get_int_param('limit', DEFAULT_LIMIT)
     offset = get_int_param('offset', DEFAULT_OFFSET)
 

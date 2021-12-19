@@ -21,6 +21,13 @@ var getSimpleBalance = function() {
                   }
               }
           }
-          return result;
+          balance = []
+          for (var ticker in result) {
+            b = result[ticker];
+            b["ticker"] = ticker;
+            balance.push(b);
+          }
+          balance.sort((a, b) => { return b.value - a.value});
+          return balance;
       });
 }

@@ -1,17 +1,17 @@
 var app = new Vue({
     el: '#app',
     data: {
-      balance: {},
+      balance: [],
     },
     methods: {
-        icon(ticker) {
-            return '/icons/' + ticker.toLowerCase() + '.svg';
+        icon(balance) {
+            return '/icons/' + balance.ticker.toLowerCase() + '.svg';
         }
     },
     created:  function() {
       getSimpleBalance()
         .then(resp => {
-            this.balance = resp;
+          this.balance = resp;
         });
     }
   })

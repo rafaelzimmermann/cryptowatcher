@@ -4,6 +4,7 @@ import math
 
 from price.config import Config
 from price.getprices import get_prices
+from price.getprices import Price
 
 
 class Balance:
@@ -12,10 +13,11 @@ class Balance:
         self.ticker = ticker
         self.amount = amount
         self.fiat = {x: 0 for x in fiat}
+        self.value = 0
 
-    def update_fiat(self, config: Config):
-        for f in self.fiat:
-            get_prices(self.fiat.keys(), f, config)
+    def update_value(self, price: Price):
+        # TODO drop support multiple currencies
+        self.value = price.price * self.amount_float
 
     @property
     def amount_float(self):

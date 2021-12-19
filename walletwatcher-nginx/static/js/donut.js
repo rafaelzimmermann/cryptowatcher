@@ -48,7 +48,7 @@ function drawTotals(chart, options) {
   ctx.fillStyle = options.color;
   ctx.textBaseline = "middle";
 
-  let textX = Math.round((width - ctx.measureText(options.text).width) * 0.5);
+  let textX = Math.round((width - ctx.measureText(options.text).width) * 0.6);
   let textY = height / 2;
   ctx.fillText(options.text, textX, textY);
   ctx.save();
@@ -64,15 +64,15 @@ var centerTitlePlugin = {
 }
 
 var updateChart = function(balance) {
-    tickers = Object.keys(balance);
     balances = [];
     total = 0;
-    tickers.forEach((t) => {
-        balances.push(balance[t]["value"]);
-        total += balance[t]["value"];
+    balance.forEach((b) => {
+        balances.push(b["value"]);
+        total += b["value"];
     });
+    
     const data = {
-      labels: tickers,
+      labels: balance.map(b => { return b.ticker }),
       datasets: [
         {
           label: 'Balance',
@@ -82,7 +82,7 @@ var updateChart = function(balance) {
       ]
     };
     config.data = data;
-    config.options.plugins.centerTitle.text = "€" + total.toFixed(2);
+    config.options.plugins.centerTitle.text = "€ " + total.toFixed(2);
     Chart.register(centerTitlePlugin)
     const ctx = document.getElementById('balance').getContext('2d');
     const myChart = new Chart(ctx, config);

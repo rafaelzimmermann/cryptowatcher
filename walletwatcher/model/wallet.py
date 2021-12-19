@@ -2,6 +2,7 @@ from typing import List
 
 from model.balance import Balance
 from price.getprices import get_prices
+from price.priceservice import PriceService
 
 WALLET_EXODUS = 1
 WALLET_BINANCE = 2
@@ -22,12 +23,13 @@ WALLETS_PRECISION = {
     4: 8
 }
 
-MIN_VAL = 10
+MIN_VAL = 1
 
 
 class Wallet:
 
     def __init__(self, id: int, name: str, type: int, fiat: List[str] = ["EUR"]):
+        # TODO drop mult fiat support
         self.id = id
         self.name = name
         self.type = type
@@ -39,22 +41,26 @@ class Wallet:
             self.balance[ticker] = Balance(ticker, amount, self.fiat)
         self.balance[ticker].amount += amount
 
-    def adjust_balance(self):
+    def adjust_balance(self, price_service: PriceService):
+        tickers = [b.ticker for b in self.balance.values()]
+        prices = {p.ticker: p for p in price_service.prices(tickers, self.fiat[0])}
         for balance in self.balance.values():
-            if balance.amount_float < MIN_VAL:
+            if balance.ticker not in prices:
+                balance.value = 0
+                balance.amount = 0
+                continue
+            balance.update_value(prices[balance.ticker])
+            if balance.value < MIN_VAL:
                 balance.amount = 0
 
     def to_dict(self):
         result = {}
         for b in self.balance.values():
-            result[b.ticker] = {
-                "amount": b.amount_float
-            }
-
-        prices = get_prices([b.ticker for b in self.balance.values()], self.fiat[0])
-        for price in prices:
-            if price:
-                result[price.ticker][self.fiat[0]] = price.price * result[price.ticker]["amount"]
+            if b.value > 0:
+                result[b.ticker] = {
+                    "amount": b.amount_float,
+                    self.fiat[0]: b.value
+                }
         return result
 
 
