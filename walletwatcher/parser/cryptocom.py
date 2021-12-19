@@ -10,6 +10,8 @@ from model.wallet import WALLETS_PRECISION
 from parser.parser import Parser
 from datetime import datetime
 
+from model.transaction import DEPOSIT
+
 DATE_FORMAT = "%Y-%m-%d %H:%M:%S"
 
 
@@ -29,12 +31,14 @@ class CryptoComParser(Parser, ABC):
 
     @staticmethod
     def _get_transaction_type(value: str) -> str:
-        if WITHDRAWAL in value:
+        if any(t in value for t in [WITHDRAWAL, 'card_cashback_reverted', 'dust_conversion_debited']):
             return WITHDRAWAL
-        if 'purchase' in value:
+        if any(t in value for t in ['purchase', 'crypto_exchange', 'recurring_buy_order']):
             return EXCHANGE
-        raise Exception('Unknown type')
-
+        if any(t in value for t in ['referral_card_cashback', 'mco_stake_reward', 'reimbursement', 'dust_conversion_credited']):
+            return DEPOSIT
+        return None
+    
     @staticmethod
     def _parse_line(line: str) -> Transaction:
         parts = line.split(',')
@@ -48,11 +52,13 @@ class CryptoComParser(Parser, ABC):
         # 7 - Native Amount
         # 8 - Native Amount (in USD)
         # 9 - Transaction Kind
-
+        t_type = CryptoComParser._get_transaction_type(parts[9])
+        if not t_type:
+            return None
         t = Transaction(
             id=0,
             date=datetime.strptime(parts[0], DATE_FORMAT) if parts[0] else None,
-            transaction_type=CryptoComParser._get_transaction_type(parts[9]),
+            transaction_type=t_type,
             wallet=WALLET_CRYPTOCOM,
             out_amount=CryptoComParser._parse_amount(parts[3]),
             out_currency=parts[2],
@@ -71,6 +77,8 @@ class CryptoComParser(Parser, ABC):
                     skip_header = False
                     continue
                 transaction = CryptoComParser._parse_line(line)
+                if not transaction:
+                    continue
                 if not transaction.txid:
                     print("MISSING TXID:", transaction)
                 transactions.append(transaction)
