@@ -23,7 +23,7 @@ var getSimpleBalance = function() {
           }
           balance = []
           for (var ticker in result) {
-            b = result[ticker];
+            var b = result[ticker];
             b["ticker"] = ticker;
             balance.push(b);
           }
@@ -31,3 +31,5 @@ var getSimpleBalance = function() {
           return balance;
       });
 }
+
+export { getSimpleBalance };

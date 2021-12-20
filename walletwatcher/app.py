@@ -22,7 +22,8 @@ ALLOWED_EXTENSIONS = {'csv'}
 UPLOAD_FOLDER = '/tmp'
 
 config = Config('config.json')
-dictConfig(config.logging)
+if config.logging:
+    dictConfig(config.logging)
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER

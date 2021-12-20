@@ -6,3 +6,26 @@ body {
     background-color: var(--background);
     color: #fff;
 }
+
+#csv-upload{
+    fill: #000;
+}
+
+#sidebarMenu {
+  position:fixed;
+  width: 200px;
+  z-index: 1000;
+  left: 0;
+  top: 15;
+  border-right: 1px solid #162636;
+  height: 100%;
+}
+
+#sidebarMenu a {
+  color: #000;
+}
+
+#sidebarMenu i {
+  font-size: 1.5em;
+  font-weight: bold;
+}

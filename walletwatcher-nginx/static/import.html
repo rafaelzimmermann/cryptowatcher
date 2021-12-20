@@ -30,39 +30,45 @@
             <div class="col"></div>
             <div class="col-6">
                 <form id="csv-upload">
-                <div class="row">
+                <div class="row g-1">
                     <div class="form-check form-check-inline">
                         <input class="form-check-input" type="radio" name="type" id="binace-radio" value="binance" checked>
                         <label class="form-check-label" for="binace-radio">
+                            <img src="/icons/wallet/binance.svg" height="32px" width="32px"/>
                             Binance
                         </label>
                     </div>
                     <div class="form-check form-check-inline">
                         <input class="form-check-input" type="radio" name="type" id="cryptocom-radio" value="cryptocom">
                         <label class="form-check-label" for="cryptocom-radio">
+                            <img src="/icons/wallet/cryptocom.svg" height="32px" width="32px"/>
                             Crypto.com
                         </label>
                     </div>
                     <div class="form-check form-check-inline">
                         <input class="form-check-input" type="radio" name="type" id="daedalu-radio" value="daedalus">
                         <label class="form-check-label" for="daedalu-radio">
+                            <img src="/icons/wallet/daedalus.svg" height="32px" width="32px"/>
                             Daedalus
                         </label>
                     </div>
                     <div class="form-check form-check-inline">
                         <input class="form-check-input" type="radio" name="type" id="exodus-radio" value="exodus">
                         <label class="form-check-label" for="exodus-radio">
-                            Exodus
+                            <img src="/icons/wallet/exodus.svg" height="32px" width="32px"/>
                         </label>
                     </div>
 
                 </div>
-                <div class="row">
-                    <input type="file" class="form-control" id="file-input" />
+                <div class="row g-2">
+                    <div class="col-auto">
+                        <input type="file" class="form-control" id="file-input" />
+                    </div>
+                    <div class="col-auto">
+                        <button id="upload-button" type="submit" class="btn btn-primary mb-3">Import</button>
+                    </div>
                 </div>
-                <div class="row">
-                    <button id="upload-button" type="submit" class="btn btn-primary mb-3">Import</button>
-                </div>
+                
                 </form>
 
             </div>
