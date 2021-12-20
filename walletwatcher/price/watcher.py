@@ -16,9 +16,9 @@ class PriceWatcher:
         self.config = conf
 
     def watch_price_metrics(self):
-        self.logger.info("Downloading prices")
+        self.logger.info("Fetching prices")
         for currency in self.config.currencies:
-            for price in self.price_service.prices(self.config.tickers, currency, skip_cache=True):
+            for price in self.price_service.prices(self.config.tickers, currency):
                 self.gprice.labels(symbol=price.symbol, ticker=price.ticker, fiat=price.fiat, source=price.source).set(price.price)
 
             for price in self.price_service.prices(sorted(self.config.wallet.keys()), currency):

@@ -1,7 +1,7 @@
 
 
 clean:
-	docker-compose down --rmi all -v --remove-orphans
+	docker-compose down --rmi local -v --remove-orphans
 
 clean-all: clean
 	rm -rf db-data/*

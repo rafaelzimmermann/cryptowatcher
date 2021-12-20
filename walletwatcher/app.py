@@ -2,10 +2,12 @@ import json
 import os
 
 from flask import Flask, jsonify, request
+from logging.config import dictConfig
+
 
 from storage.transactionstorage import TransactionStorage
 from balance.balancecalculator import BalanceCalculator
-from balance.balanceimporter import import_csv
+from balance.transactionimporter import TransactionImporter
 from price.watcher import PriceWatcher
 from price.priceservice import PriceService
 from price.config import Config
@@ -19,12 +21,14 @@ DEFAULT_OFFSET = 0
 ALLOWED_EXTENSIONS = {'csv'}
 UPLOAD_FOLDER = '/tmp'
 
+config = Config('config.json')
+dictConfig(config.logging)
+
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 transaction_storage = TransactionStorage()
-config = Config('config.json')
-price_service = PriceService(config)
+price_service = PriceService(config, app.logger)
 price_watcher = PriceWatcher(price_service=price_service, conf=config, logger=app.logger)
 
 
@@ -62,8 +66,8 @@ def get_transactions():
     return jsonify(result)
 
 
-@app.route("/v1/wallet/<name>", methods=["POST"])
-def import_wallet_csv(name):
+@app.route("/v1/wallet/<source>", methods=["POST"])
+def import_wallet_csv(source):
     # check if the post request has the file part
     if 'file' not in request.files:
         return jsonify({"error": "Missing file"}), BAD_REQUEST
@@ -76,7 +80,7 @@ def import_wallet_csv(name):
         filename = secure_filename(file.filename)
         file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
         file.save(file_path)
-        import_csv(app.config['UPLOAD_FOLDER'], name)
+        TransactionImporter(storage=transaction_storage).import_csv(app.config['UPLOAD_FOLDER'], source)
         return jsonify({}), 200
     
 

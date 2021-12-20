@@ -10,3 +10,4 @@ class Config:
             self.wallet = conf["wallet"]
             self.tickers = conf["tickers"]
             self.coin_market_cap = conf["coinMarketCap"] if "coinMarketCap" in conf else None
+            self.logging = conf["logging"]

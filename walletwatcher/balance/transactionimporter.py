@@ -19,14 +19,16 @@ PARSERS = {
 }
 
 
-def import_csv(file_path: str, source: str):
-    parser = PARSERS[source](file_path)
-    exec_import([parser])
+class TransactionImporter:
+
+    def __init__(self, storage: TransactionStorage) -> None:
+        self.storage = storage
+
+    def import_csv(self, file_path: str, source: str):
+        parser = PARSERS[source](file_path)
+        self._save([parser])
 
 
-def exec_import(parsers: List[Parser]):
-    storage = TransactionStorage()
-    for parser in parsers:
-        storage.save(parser.transactions())
-    balance_calculator = BalanceCalculator(storage)
-    balance_calculator.calculate_from_beginning()
+    def _save(self, parsers: List[Parser]):
+        for parser in parsers:
+            self.storage.save(parser.transactions())
