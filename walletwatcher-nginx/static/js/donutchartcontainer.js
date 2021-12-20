@@ -1,3 +1,33 @@
+var sum = (a, b) => { return a + b };
+
+var drawTotals = (chart, options) => {
+    let width = chart.chartArea.width;
+    let height = chart.chartArea.height;
+    let ctx = chart.ctx;
+  
+    ctx.restore();
+    let fontSize = (height / 130).toFixed(2);
+    ctx.font = fontSize + "em Roboto,sans-serif";
+    ctx.fillStyle = options.color;
+    ctx.textBaseline = "middle";
+  
+    let textX = Math.round((width - ctx.measureText(options.text).width) * 0.5);
+    let textY = height / 2;
+    ctx.fillText(options.text, textX, textY);
+    ctx.save();
+}
+  
+var centerTitlePlugin = {
+    id: 'centerTitle',
+    beforeDraw: function(chart, args, options) {
+        if (options.display === true && options.text.length > 0) {
+            drawTotals(chart, options);
+        }
+    }
+}
+
+Chart.register(centerTitlePlugin);
+
 
 const DonutChartContainer = {
     name: 'DonutChartContainer',
@@ -34,9 +64,19 @@ const DonutChartContainer = {
             }
         }
     }),
+    methods: {
+        calcBalance: (data) => {
+            var total = 0;
+            data.datasets.forEach(dataset => {
+                total += dataset.data.reduce(sum);
+            });
+            return "  € " + total.toFixed(2);
+        }
+    },
     watch: {
         chartData () {
-            if (this.loaded ) {
+            if (this.chartData && this.chartData.datasets.length > 0 && this.options) {
+                this.options.plugins.centerTitle.text = this.calcBalance(this.chartData);
                 this.$data._chart.update();
             }
         }
@@ -47,8 +87,8 @@ const DonutChartContainer = {
         </div>
     `,
     async mounted () {
-      this.loaded = true;
-      this.renderChart(this.chartdata, this.options)
+        this.loaded = true;
+        this.renderChart(this.chartData, this.options);
     }
   }
 

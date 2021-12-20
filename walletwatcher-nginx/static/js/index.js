@@ -32,7 +32,6 @@ var app = new Vue({
             }]
           }
           this.loaded = true;
-          console.log(this.chartdata);
         });
     }
   })
