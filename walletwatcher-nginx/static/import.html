@@ -9,71 +9,95 @@
           rel="stylesheet"
           integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3"
           crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
     <link href="css/base.css" rel="stylesheet"/>
 </head>
 <body>
-    <div class="header">
-        <ul class="nav nav-pills">
-          <li class="nav-item">
-            <a class="nav-link" href="/index.html">Balance</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link active" aria-current="page" href="#">Import</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="/transactions.html">Transaction</a>
-          </li>
-        </ul>
-    </div>
-    <div class="container">
+    <header class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0 shadow">
+        <a class="navbar-brand col-md-3 col-lg-2 me-0 px-3" href="#">CryptoWatcher</a>
+        <button class="navbar-toggler position-absolute d-md-none collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+    </header>
+    <div class="container-fluid">
         <div class="row">
-            <div class="col"></div>
-            <div class="col-6">
-                <form id="csv-upload">
-                <div class="row g-1">
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" name="type" id="binace-radio" value="binance" checked>
-                        <label class="form-check-label" for="binace-radio">
-                            <img src="/icons/wallet/binance.svg" height="32px" width="32px"/>
-                            Binance
-                        </label>
-                    </div>
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" name="type" id="cryptocom-radio" value="cryptocom">
-                        <label class="form-check-label" for="cryptocom-radio">
-                            <img src="/icons/wallet/cryptocom.svg" height="32px" width="32px"/>
-                            Crypto.com
-                        </label>
-                    </div>
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" name="type" id="daedalu-radio" value="daedalus">
-                        <label class="form-check-label" for="daedalu-radio">
-                            <img src="/icons/wallet/daedalus.svg" height="32px" width="32px"/>
-                            Daedalus
-                        </label>
-                    </div>
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" name="type" id="exodus-radio" value="exodus">
-                        <label class="form-check-label" for="exodus-radio">
-                            <img src="/icons/wallet/exodus.svg" height="32px" width="32px"/>
-                        </label>
-                    </div>
-
-                </div>
-                <div class="row g-2">
-                    <div class="col-auto">
-                        <input type="file" class="form-control" id="file-input" />
-                    </div>
-                    <div class="col-auto">
-                        <button id="upload-button" type="submit" class="btn btn-primary mb-3">Import</button>
-                    </div>
-                </div>
-                
-                </form>
-
+            <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
+            <div class="position-sticky pt-1">
+                <ul class="nav flex-column">
+                <li class="nav-item">
+                    <a class="nav-link active" href="/index.html">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-home" aria-hidden="true"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+                    Balance
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/import.html">
+                    <i class="bi bi-file-arrow-down"></i>
+                    Import
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/transactions.html">
+                    <i class="bi bi-card-checklist"></i>
+                    Transactions
+                    </a>
+                </li>
+                </ul>
             </div>
-            <div class="col">
+            </nav>
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4" id="app">
+            <div class="container pt-3">
+                <div class="row">
+                    <div class="col"></div>
+                    <div class="col-6">
+                        <form id="csv-upload">
+                        <div class="row g-1">
+                            <div class="form-check form-check-inline pt-3">
+                                <input class="form-check-input" type="radio" name="type" id="binace-radio" value="binance" checked>
+                                <label class="form-check-label" for="binace-radio">
+                                    <img src="/icons/wallet/binance.svg" height="32px" width="32px"/>
+                                    Binance
+                                </label>
+                            </div>
+                            <div class="form-check form-check-inline pt-3">
+                                <input class="form-check-input" type="radio" name="type" id="cryptocom-radio" value="cryptocom">
+                                <label class="form-check-label" for="cryptocom-radio">
+                                    <img src="/icons/wallet/cryptocom.svg" height="32px" width="32px"/>
+                                    Crypto.com
+                                </label>
+                            </div>
+                            <div class="form-check form-check-inline pt-3">
+                                <input class="form-check-input" type="radio" name="type" id="daedalu-radio" value="daedalus">
+                                <label class="form-check-label" for="daedalu-radio">
+                                    <img src="/icons/wallet/daedalus.svg" height="32px" width="32px"/>
+                                    Daedalus
+                                </label>
+                            </div>
+                            <div class="form-check form-check-inline pt-3">
+                                <input class="form-check-input" type="radio" name="type" id="exodus-radio" value="exodus">
+                                <label class="form-check-label" for="exodus-radio">
+                                    <img src="/icons/wallet/exodus.svg" height="32px"/>
+                                </label>
+                            </div>
+        
+                        </div>
+                        <div class="row g-2 pt-3">
+                            <div class="col-auto">
+                                <input type="file" class="form-control" id="file-input" />
+                            </div>
+                            <div class="col-auto">
+                                <button id="upload-button" type="submit" class="btn btn-primary mb-3">Import</button>
+                            </div>
+                        </div>
+                        
+                        </form>
+        
+                    </div>
+                    <div class="col">
+                    </div>
+                </div>
             </div>
+            </main>
         </div>
     </div>
 
