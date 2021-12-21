@@ -5,6 +5,9 @@ Track your favorite crypto coin price and your wallet balance.
 
 ![image](https://user-images.githubusercontent.com/2369982/132985763-1ed6920c-2a44-442b-bb9d-7373d82a4d2e.png)
 
+Import your tranasctions and manage your wallets. (Work In Progress)
+
+![image](https://user-images.githubusercontent.com/2369982/147010380-da48c3c2-55a4-4330-875c-bdef65d36e78.png)
 
 
 ## Install
