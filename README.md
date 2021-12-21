@@ -7,7 +7,6 @@ Track your favorite crypto coin price and your wallet balance.
 
 
 
-
 ## Install
 
 ### Create .env:
@@ -19,7 +18,7 @@ ADMIN_PASSWORD=admin
 ### Configure your wallet assets and prices to watch
 
 ```
-vi cryptowatcher/config.json
+vi walletwatcher/config.json
 ```
 
 
@@ -31,8 +30,11 @@ cd cryptowatcher
 docker-compose up -d
 ```
 
-Open on your browser: 
+Grafana: 
 [http://localhost:3000/](http://localhost:3000/d/WJea-ZI7k/crypto-price?orgId=1&from=now-3h&to=now)
+
+Wallet watcher manager:
+[http://localhost:1337/](http://localhost:1337/)
 
 
 To check the available symbols:
@@ -48,9 +50,9 @@ curl https://api.binance.com/api/v3/exchangeInfo | jq ".symbols[].symbol"
 ## Containers:
 
 * Prometheus (metrics database) `http://<host-ip>:9090`
-* Prometheus-Pushgateway (push acceptor for ephemeral and batch jobs) `http://<host-ip>:9091`
 * Grafana (visualize metrics) `http://<host-ip>:3000`
-* cryptowatcher (containers that collect prices)
+* walletwatcher (API that allows user to import transcations csv file and configure wallets)
+* walletwatcher-nginx 
 
 ## Setup Grafana
 
@@ -82,15 +84,12 @@ Grafana is preconfigured with dashboards and Prometheus as the default data sour
 
 ------
 
-Powered by: 
-
-[<img src="https://user-images.githubusercontent.com/2369982/132985035-7cb35db9-d4db-4cc4-afe6-e609a96958f8.png" width="400" />](https://accounts.binance.com/en/register?ref=200897200)
 
 
 ## Did you like it? Consider paying me a coffee
 
-| BTC             | Cardano         | 
-| --------------- | --------------- |
-| ![image](https://user-images.githubusercontent.com/2369982/132985113-aff4d61f-b262-48e8-b998-0c3ae4fee834.png) | ![image](https://user-images.githubusercontent.com/2369982/132985145-329632b1-e4d5-4d79-b214-e22c7773c146.png) |
+| BTC             | Cardano         | Sol             |
+| --------------- | --------------- | --------------- |
+| <img src="https://user-images.githubusercontent.com/2369982/132985113-aff4d61f-b262-48e8-b998-0c3ae4fee834.png" alt="BTC" width="200"/> | <img src="https://user-images.githubusercontent.com/2369982/143719435-17815999-2df2-4015-a2f2-54a02618cf2a.png" alt="ADA" width="200"/> | <img src="https://user-images.githubusercontent.com/2369982/143735968-1dd9de18-9260-4c9c-9030-f09ea86c8160.png" alt="SOL" width="200"/> |
 
 Based on: [Docker-Compose-Prometheus-and-Grafana](https://github.com/Einsteinish/Docker-Compose-Prometheus-and-Grafana)
