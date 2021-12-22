@@ -83,11 +83,9 @@ services:
     labels:
       org.label-schema.group: "importer"
 
-  nginx:
-    build: ./walletwatcher-nginx
-    container_name: walletwatcher_nginx
-    volumes:
-      - ./walletwatcher-nginx/static:/app/static
+  manager:
+    build: ./manager
+    container_name: manager
     ports:
       - 1337:80
     depends_on:
