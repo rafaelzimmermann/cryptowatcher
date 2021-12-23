@@ -13,6 +13,7 @@
     "bootstrap-icons": "^1.7.2",
     "chart.js": "^3.6.2",
     "core-js": "^3.6.5",
+    "qrcode.vue": "^3.3.3",
     "vue": "^3.0.0",
     "vue-chart-3": "^3.0.4",
     "vue-router": "^4.0.0-0"

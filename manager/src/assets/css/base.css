@@ -2,29 +2,37 @@
     --background: hsl(244, 0%, 16%);
   }
   
-  body {
-      background-color: var(--background);
-      color: #fff;
-  }
-  
-  #csv-upload{
-      fill: #000;
-  }
-  
-  #sidebarMenu {
-    position:fixed;
-    z-index: 1000;
-    left: 0;
-    top: 15;
-    border-right: 1px solid #162636;
-    height: 100%;
-  }
-  
-  #sidebarMenu a {
-    color: #000;
-  }
-  
-  #sidebarMenu i {
-    font-size: 1.5em;
-    font-weight: bold;
-  }
+body {
+    background-color: var(--background);
+    color: #fff;
+}
+
+#csv-upload{
+    fill: #000;
+}
+
+#sidebarMenu {
+  position:fixed;
+  z-index: 1000;
+  left: 0;
+  top: 15;
+  border-right: 1px solid #162636;
+  height: 100%;
+}
+
+#sidebarMenu a {
+  color: #000;
+}
+
+#sidebarMenu i {
+  font-size: 1.5em;
+  font-weight: bold;
+}
+
+#sidebarMenu .fix_bottom {
+    position: absolute;
+    display: inline-block;
+    bottom: 0;
+    left: 15px;
+    width: 100%;
+}

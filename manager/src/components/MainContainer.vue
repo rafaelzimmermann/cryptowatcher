@@ -22,6 +22,12 @@
                 Transactions
               </a>
             </li>
+            <li class="nav-item">
+              <router-link class="nav-link" to="/support">
+                <i class="bi bi-heart"></i>
+                Support
+              </router-link>
+            </li>
           </ul>
         </div>
       </nav>
@@ -39,5 +45,4 @@ export default {
 </script>
 
 <style>
-
 </style>

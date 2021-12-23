@@ -10,6 +10,11 @@ const routes = [
     path: '/import',
     name: 'Import Transactiopns',
     component: () => import('../views/ImportCSV.vue')
+  },
+  {
+    path: '/support',
+    name: 'Support',
+    component: () => import('../views/Support.vue')
   }
 ]
 
