@@ -87,17 +87,6 @@ Grafana is preconfigured with dashboards and Prometheus as the default data sour
 
 ------
 
-
-
-## Did you like it? Consider paying me a coffee
-
-| BTC             | Cardano         | Sol             |
-| --------------- | --------------- | --------------- |
-| <img src="https://user-images.githubusercontent.com/2369982/132985113-aff4d61f-b262-48e8-b998-0c3ae4fee834.png" alt="BTC" width="200"/> | <img src="https://user-images.githubusercontent.com/2369982/143719435-17815999-2df2-4015-a2f2-54a02618cf2a.png" alt="ADA" width="200"/> | <img src="https://user-images.githubusercontent.com/2369982/143735968-1dd9de18-9260-4c9c-9030-f09ea86c8160.png" alt="SOL" width="200"/> |
-
-Based on: [Docker-Compose-Prometheus-and-Grafana](https://github.com/Einsteinish/Docker-Compose-Prometheus-and-Grafana)
-
-
 ## Special Thanks
 
 [Atomic labs]('https://github.com/atomiclabs') for [svg icons](https://github.com/atomiclabs/cryptocurrency-icons/)
