@@ -55,7 +55,7 @@ curl https://api.binance.com/api/v3/exchangeInfo | jq ".symbols[].symbol"
 * Prometheus (metrics database) `http://<host-ip>:9090`
 * Grafana (visualize metrics) `http://<host-ip>:3000`
 * walletwatcher (API that allows user to import transcations csv file and configure wallets)
-* walletwatcher-nginx 
+* manager (API Front-end [WIP]) 
 
 ## Setup Grafana
 
