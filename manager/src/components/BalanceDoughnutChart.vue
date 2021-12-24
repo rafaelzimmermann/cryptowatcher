@@ -13,7 +13,6 @@ Chart.register(...registerables)
 var centerTitlePlugin = {
     id: 'centerTitle',
     beforeDraw: function(chart, args, options) {
-      console.log(chart)
       var calcBalance = (datasets) => {
         var total = 0;
         datasets.forEach(dataset => {

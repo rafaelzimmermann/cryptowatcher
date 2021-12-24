@@ -15,9 +15,7 @@
                 <tbody>
                 <tr class="table-active" v-for="b in balance" :key="b">
                     <th scope="row">
-                        <object type="image/svg+xml" :data="icon(b)" width="32" height="32">
-                            <img src="/icons/crypto/generic.png" alt="No SVG support" width="32" height="32">
-                        </object>   
+                        <CryptoIcon :currency="b.ticker" width="32" height="32"/>
                     </th>
                     <td>{{ b.ticker }}</td>
                     <td>{{ b.amount.toFixed(4) }}</td>
@@ -30,8 +28,8 @@
 </template>
 
 <script>
-import '../balance'
-import { getSimpleBalance} from '../balance'
+
+import { getSimpleBalance} from '../service/balanceService'
 
 export default {
     name: 'BalanceOverview',

@@ -17,10 +17,10 @@
                 </router-link>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="/transactions.html">
+              <router-link class="nav-link" to="/transactions">
                 <i class="bi bi-card-checklist"></i>
                 Transactions
-              </a>
+              </router-link>
             </li>
             <li class="nav-item">
               <router-link class="nav-link" to="/support">
