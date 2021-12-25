@@ -51,12 +51,12 @@ export default {
         .then(resp => {
             this.balance = resp;
             this.chartdata = {
-            labels: this.balance.map(b => { return b.ticker }),
-            datasets: [{
-                label: 'Balance',
-                backgroundColor: '#fff',
-                data: this.balance.map(b => {return b.value})
-            }]
+                labels: this.balance.map(b => { return b.ticker }),
+                datasets: [{
+                    label: 'Balance',
+                    backgroundColor: '#fff',
+                    data: this.balance.map(b => {return b.value})
+                }]
             }
             this.loaded = true;
         });

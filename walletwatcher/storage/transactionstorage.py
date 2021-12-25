@@ -1,36 +1,16 @@
-import psycopg2
 
 from typing import List, Optional
 from model.transaction import Transaction
 
 from model.transaction import transaction_type_int, transaction_type_str
+from storage.Database import Database
 
-
-def create_connection():
-    return psycopg2.connect(
-        database="walletwatcher",
-        user="walletwatcher",
-        password="walletwatcher",
-        host="postgres",
-        port="5432"
-    )
-
-
-def init_database(connection):
-    sql_file = open('/app/database.sql', 'r')
-    connection.autocommit = True
-    connection.rollback()
-    with connection, connection.cursor() as cursor:
-        cursor.execute(sql_file.read())
-    connection.autocommit = False
 
 
 class TransactionStorage:
 
-    def __init__(self):
-        self.connection = create_connection()
-        self.connection.autocommit = True
-        self.connection.rollback()
+    def __init__(self, database: Database):
+        self.database = database
 
     def _parse_row(self, row) -> Transaction:
         return Transaction(
@@ -47,7 +27,7 @@ class TransactionStorage:
                 txid=row[10])
 
     def get_by_txid(self, txid) -> Optional[Transaction]:
-        cursor = self.connection.cursor()
+        cursor = self.database.connection.cursor()
         cursor.execute('''
         SELECT id, date, type, wallet, out_amount, out_currency, fee_amount, fee_currency, in_amount, in_currency, txid
         FROM transaction
@@ -59,7 +39,7 @@ class TransactionStorage:
         return self._parse_row(row)
 
     def save(self, transactions: List[Transaction]):
-        cursor = self.connection.cursor()
+        cursor = self.database.connection.cursor()
         for t in transactions:
             if self.get_by_txid(t.txid):
                 continue
@@ -77,7 +57,7 @@ class TransactionStorage:
                 print(e)
 
     def all_transactions(self) -> List[Transaction]:
-        cursor = self.connection.cursor()
+        cursor = self.database.connection.cursor()
         cursor.execute('''
         SELECT id, date, type, wallet, out_amount, out_currency, fee_amount, fee_currency, in_amount, in_currency, txid
         FROM transaction
@@ -89,7 +69,7 @@ class TransactionStorage:
         return transactions
 
     def get_transactions(self, limit: int, offset: int) -> List[Transaction]:
-        cursor = self.connection.cursor()
+        cursor = self.database.connection.cursor()
         cursor.execute('''
         SELECT id, date, type, wallet, out_amount, out_currency, fee_amount, fee_currency, in_amount, in_currency, txid
         FROM transaction

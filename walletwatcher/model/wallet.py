@@ -1,8 +1,6 @@
 from typing import List
 
 from model.balance import Balance
-from price.getprices import get_prices
-from price.priceservice import PriceService
 
 WALLET_EXODUS = 1
 WALLET_BINANCE = 2
@@ -14,6 +12,13 @@ WALLETS = {
     2: 'Binance',
     3: 'crypto.com',
     4: 'Daedalus'
+}
+
+WALLETS_ID = {
+    'Exodus': 1,
+    'Binance': 2,
+    'crypto.com': 3,
+    'Daedalus': 4 
 }
 
 WALLETS_PRECISION = {
@@ -28,41 +33,31 @@ MIN_VAL = 1
 
 class Wallet:
 
-    def __init__(self, id: int, name: str, type: int, fiat: List[str] = ["EUR"]):
+    def __init__(self, id: int, name: str):
         # TODO drop mult fiat support
-        self.id = id
-        self.name = name
-        self.type = type
-        self.fiat = fiat
+        self.id = id if id else WALLETS_ID[name]
+        self.name = name if name else WALLETS[id]
         self.balance = {}
 
     def deposit(self, ticker: str, amount: int):
         if ticker not in self.balance:
-            self.balance[ticker] = Balance(ticker, amount, self.fiat)
+            self.balance[ticker] = Balance(ticker, amount)
         self.balance[ticker].amount += amount
-
-    def adjust_balance(self, price_service: PriceService):
-        tickers = [b.ticker for b in self.balance.values()]
-        prices = {p.ticker: p for p in price_service.prices(tickers, self.fiat[0])}
-        for balance in self.balance.values():
-            if balance.ticker not in prices:
-                balance.value = 0
-                balance.amount = 0
-                continue
-            balance.update_value(prices[balance.ticker])
-            if balance.value < MIN_VAL:
-                balance.amount = 0
 
     def to_dict(self):
         result = {}
         for b in self.balance.values():
-            if b.value > 0:
+            if b.amount_float > 0:
                 result[b.ticker] = {
-                    "amount": b.amount_float,
-                    self.fiat[0]: b.value
+                    "amount": b.amount_float
                 }
         return result
-
+    
+    @staticmethod
+    def from_dict(id: int, name: str, data: dict):
+        wallet = Wallet(name)
+        for ticker in data:
+            wallet.deposit(ticker, data[ticker])
 
     @staticmethod
     def wallet_name(wallet_id: int):

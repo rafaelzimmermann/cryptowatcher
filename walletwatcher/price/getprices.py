@@ -25,6 +25,13 @@ class Price:
     def to_csv(self):
         return f"{self.ticker},{self.fiat},{self.symbol},{self.price},{self.source},{time.time()}"
 
+    def to_dict(self):
+        return {
+            "ticker": self.ticker,
+            "price": self.price,
+            "currency": self.fiat
+        }
+
     @staticmethod
     def from_csv(line):
         parts = line.split(',')

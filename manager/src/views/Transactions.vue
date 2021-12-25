@@ -43,7 +43,6 @@ export default {
         getTransactions(this.limit, this.offset)
             .then(transactions => {
                 this.transactions = transactions;
-                console.log(this.transactions)
             });
     }
 }

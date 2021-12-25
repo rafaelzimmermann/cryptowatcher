@@ -1,3 +1,4 @@
+import json
 from typing import List
 
 from model.transaction import Transaction
@@ -7,7 +8,7 @@ from price.priceservice import PriceService
 
 class Portfolio:
 
-    def __init__(self, price_service: PriceService):
+    def __init__(self, price_service: PriceService = None):
         self.wallets = {}
         self.price_service = price_service
 
@@ -15,7 +16,7 @@ class Portfolio:
         for transaction in transactions:
             if transaction.wallet not in self.wallets:
                 self.wallets[transaction.wallet] = \
-                    Wallet(transaction.wallet, Wallet.wallet_name(transaction.wallet), transaction.type)
+                    Wallet(transaction.wallet, Wallet.wallet_name(transaction.wallet))
             wallet = self.wallets[transaction.wallet]
 
             if transaction.in_amount != 0:
@@ -26,12 +27,18 @@ class Portfolio:
 
             if transaction.fee_amount != 0:
                 wallet.deposit(transaction.fee_currency, transaction.fee_amount)
-        for wallet in self.wallets.values():
-            wallet.adjust_balance(self.price_service)
 
     def to_dict(self):
         wallets = self.wallets.values()
         return {wallet.name: wallet.to_dict() for wallet in wallets}
+
+    @staticmethod
+    def from_json(payload: str):
+        data = json.load(payload)
+        portifolio = Portfolio()
+        for wallet in data:
+            portifolio.wallets[wallet] = Wallet.from_dict(data[wallet])
+        return portifolio
 
 
 

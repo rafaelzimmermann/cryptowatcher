@@ -1,7 +1,7 @@
 <template>
 <div class="container-fluid">
     <div class="row">
-      <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
+      <nav id="sidebarMenu" class="col-md-3 col-lg-3 d-md-block bg-light sidebar collapse">
         <div class="position-sticky pt-1">
           <ul class="nav flex-column">
             <li class="nav-item">
@@ -23,6 +23,12 @@
               </router-link>
             </li>
             <li class="nav-item">
+              <router-link class="nav-link" to="/configuration">
+                <i class="bi bi-gear"></i>
+                Configuration
+              </router-link>
+            </li>
+            <li class="nav-item">
               <router-link class="nav-link" to="/support">
                 <i class="bi bi-heart"></i>
                 Support
@@ -40,7 +46,10 @@
 
 <script>
 export default {
-  name: 'MainContainer'
+  name: 'MainContainer',
+  data: () => ({
+    manual_portifolio: {}
+  })
 }
 </script>
 

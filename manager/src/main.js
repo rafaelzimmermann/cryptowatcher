@@ -10,6 +10,7 @@ import './assets/css/base.css';
 import BalanceDoughnutChart from './components/BalanceDoughnutChart.vue'
 import CryptoIcon from './components/CryptoIcon.vue';
 import IconAndPrice from './components/IconAndPrice.vue';
+import ConfigurationForm from './components/ConfigurationForm.vue'
 
 const app = createApp(App);
 app.use(router);
@@ -17,4 +18,5 @@ app.use(router);
 app.component('BalanceDoughnutChart', BalanceDoughnutChart);
 app.component('IconAndPrice', IconAndPrice);
 app.component('CryptoIcon', CryptoIcon);
+app.component('ConfigurationForm', ConfigurationForm);
 app.mount('#app');

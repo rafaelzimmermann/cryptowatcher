@@ -9,15 +9,9 @@ from price.getprices import Price
 
 class Balance:
 
-    def __init__(self, ticker: str, amount: int = 0, fiat: List = ["EUR"]):
+    def __init__(self, ticker: str, amount: int = 0):
         self.ticker = ticker
         self.amount = amount
-        self.fiat = {x: 0 for x in fiat}
-        self.value = 0
-
-    def update_value(self, price: Price):
-        # TODO drop support multiple currencies
-        self.value = price.price * self.amount_float
 
     @property
     def amount_float(self):
