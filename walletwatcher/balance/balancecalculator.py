@@ -1,17 +1,16 @@
 from model.balance import Balance
 from model.portfolio import Portfolio
 from storage.transactionstorage import TransactionStorage
-from price.priceservice import PriceService
+from storage.portifoliostorage import PortifolioStorage
 
 
 class BalanceCalculator:
 
-    def __init__(self, storage: TransactionStorage, price_service: PriceService):
+    def __init__(self, storage: TransactionStorage):
         self.storage = storage
-        self.price_service = price_service
 
     def calculate_from_beginning(self) -> Portfolio:
-        portfolio = Portfolio(self.price_service)
+        portfolio = Portfolio()
         portfolio.add_transactions(self.storage.all_transactions())
         return portfolio
 

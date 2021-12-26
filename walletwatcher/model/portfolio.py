@@ -3,14 +3,12 @@ from typing import List
 
 from model.transaction import Transaction
 from model.wallet import Wallet
-from price.priceservice import PriceService
 
 
 class Portfolio:
 
-    def __init__(self, price_service: PriceService = None):
+    def __init__(self):
         self.wallets = {}
-        self.price_service = price_service
 
     def add_transactions(self, transactions: List[Transaction]):
         for transaction in transactions:

@@ -1,7 +1,6 @@
 from prometheus_client import Gauge, CollectorRegistry, generate_latest
 
 from price.config import Config
-from price.getprices import Price
 from price.priceservice import PriceService
 
 

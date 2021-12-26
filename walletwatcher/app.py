@@ -1,7 +1,7 @@
 import json
 import os
 
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, make_response
 from logging.config import dictConfig
 
 
@@ -13,6 +13,7 @@ from price.priceservice import PriceService
 from price.config import Config
 from storage.ConfigStorage import ConfigStorage
 from storage.Database import Database
+from storage.portifoliostorage import PortifolioStorage
 from werkzeug.utils import secure_filename
 
 
@@ -32,6 +33,7 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 database = Database()
 transaction_storage = TransactionStorage(database=database)
+portfolio_storage = PortifolioStorage(database=database)
 config_storage = ConfigStorage(database=database)
 price_service = PriceService(config, app.logger)
 price_watcher = PriceWatcher(price_service=price_service, conf=config, logger=app.logger)
@@ -64,13 +66,21 @@ def get_prices():
 # TODO rename to portfolio
 @app.route("/v1/balance")
 def get_balance():
-    bc = BalanceCalculator(transaction_storage, price_service)
+    portfolio = portfolio_storage.get()
+    if portfolio:
+        response = make_response(portfolio,200)
+        response.headers["Content-Type"] = "application/json"
+        return response
+    bc = BalanceCalculator(transaction_storage)
     portfolio = bc.calculate_from_beginning()
-    return jsonify(portfolio.to_dict())
+
+    response = jsonify(portfolio.to_dict())
+    portfolio_storage.save(response.data)
+    return response
 
 @app.route("/v1/transactions")
 def get_transactions():
-    bc = BalanceCalculator(transaction_storage, price_service)
+    bc = BalanceCalculator(transaction_storage)
     limit = get_int_param('limit', DEFAULT_LIMIT)
     offset = get_int_param('offset', DEFAULT_OFFSET)
     result = [t.to_dict() for t in bc.get_transactions(limit=limit, offset=offset)]

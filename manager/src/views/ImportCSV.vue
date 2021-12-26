@@ -3,6 +3,12 @@
         <div class="row">
             <div class="col"></div>
             <div class="col-6">
+                <div class="alert alert-success" role="alert" v-if="showSuccess">
+                    Tansactions imported.
+                </div>
+                <div class="alert alert-danger" role="alert" v-if="showError">
+                    Failed to import transactions.
+                </div>
                 <form id="csv-upload">
                 <div class="row g-1">
                     <div class="form-check form-check-inline pt-3">
@@ -56,7 +62,9 @@
 export default {
     name: 'ImportCSV',
     data: () => ({
-        fileType: "binance"
+        fileType: "binance",
+        showSuccess: false,
+        showError: false
     }),
     methods: {
         'submit': function(e) {
@@ -67,7 +75,16 @@ export default {
             fetch('/v1/wallet/' + this.fileType, {
                 method: "POST",
                 body: formData
-            }).catch(console.log);
+            })
+            .then(() => {
+                this.showSuccess = true;
+                setTimeout(() => this.showSuccess = false, 5000);
+            })
+            .catch((error) => {
+                this.showError = true;
+                setTimeout(() => this.showError = false, 5000);
+                console.log(error);
+            });
         }
     }
 }

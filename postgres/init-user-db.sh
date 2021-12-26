@@ -20,6 +20,10 @@ psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" <<-E
       "in_currency" VARCHAR(10) NULL,
       "txid" VARCHAR(100) NOT NULL) ;
 
+    CREATE TABLE IF NOT EXISTS "walletwatcher"."portfolio" (
+      "id" SERIAL PRIMARY KEY,
+      "portfolio" JSON NOT NULL) ;
+
     CREATE TABLE IF NOT EXISTS "walletwatcher"."config" (
       "id" SERIAL PRIMARY KEY,
       "currency" VARCHAR(10) NOT NULL,
