@@ -21,6 +21,7 @@ class PriceWatcher:
                 self.gprice.labels(symbol=price.symbol, ticker=price.ticker, fiat=price.fiat, source=price.source).set(price.price)
 
             for price in self.price_service.prices(sorted(self.config.wallet.keys()), currency):
-                balance = price.price * self.config.wallet[price.ticker] if price else 0.0
+                if price.ticker in self.config.wallet:
+                    balance = price.price * self.config.wallet[price.ticker] if price else 0.0
                 self.gbalance.labels(symbol=price.symbol, ticker=price.ticker, fiat=price.fiat, source=price.source).set(balance)
         return generate_latest(self.registry)

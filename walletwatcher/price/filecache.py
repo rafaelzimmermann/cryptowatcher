@@ -1,4 +1,5 @@
 import base64
+import os
 import time
 from model.price import Price
 
@@ -38,12 +39,15 @@ class FileCache:
         return None
 
     def set_item(self, key: str, value, ttl: int = 60):
-        try:
-            with open(f'{self.path}{key}', 'w') as _f:
-                now = int(time.time() + ttl)
-                b64str = base64.b64encode(bytes(self.serializer.serialize(value), 'utf-8'))
-                
-                _f.write(str(now) + ',' + b64str.decode('utf-8'))
-        except Exception as e:
-            print('Failed to serialize', e)
+        file_path = f'{self.path}{key}'
+        if os.path.exists(file_path):
+            try:
+                with open(f'{self.path}{key}', 'w') as _f:
+                    now = int(time.time() + ttl)
+                    b64str = base64.b64encode(bytes(self.serializer.serialize(value), 'utf-8'))
+                    
+                    _f.write(str(now) + ',' + b64str.decode('utf-8'))
+            except Exception as e:
+                print('Failed to serialize', e)
+        return None
 
