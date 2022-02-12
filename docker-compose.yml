@@ -66,14 +66,15 @@ services:
     build:
       context: ./walletwatcher
       dockerfile: Dockerfile
-    command: gunicorn --bind 0.0.0.0:5000 -t 240 app:app
+    command: gunicorn  --preload --bind 0.0.0.0:8080 -t 240 app:app
     environment:
       SQL_HOST: postgres
       SQL_PORT: 5432
+      FLASK_RUN_PORT: 8080
     expose:
-      - 5000
+      - 8080
     ports:
-      - 5000:5000
+      - 8080:8080
     depends_on:
       - postgres
     container_name: walletwatcher

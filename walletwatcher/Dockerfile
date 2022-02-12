@@ -11,8 +11,13 @@ WORKDIR $HOME
 
 # install dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends netcat
+
+# Mac running on M1 chip fix
+RUN apt update -y && apt install -y build-essential libpq-dev
 COPY requirements.txt .
-RUN pip install --upgrade pip
+RUN curl https://bootstrap.pypa.io/get-pip.py | python3
+# M1 fix
+RUN pip install psycopg2-binary --no-binary psycopg2-binary
 RUN pip install -r requirements.txt
 
 # copy entrypoint-prod.sh

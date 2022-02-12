@@ -18,4 +18,4 @@ scrape_configs:
   - job_name: 'walletwatcher'
     scrape_interval: 120s
     static_configs:
-      - targets: ['walletwatcher:5000']
+      - targets: ['walletwatcher:8080']
